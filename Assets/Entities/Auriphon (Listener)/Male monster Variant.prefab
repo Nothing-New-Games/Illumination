@@ -1,0 +1,161 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &1090250276719820128
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8933601619444959475, guid: 7bf24daf5bbfd874885ce83356f9d26a, type: 3}
+      propertyPath: m_Name
+      value: Auriphon
+      objectReference: {fileID: 0}
+    - target: {fileID: -8895608571217576652, guid: 7bf24daf5bbfd874885ce83356f9d26a, type: 3}
+      propertyPath: m_Name
+      value: Auriphon
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7bf24daf5bbfd874885ce83356f9d26a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7bf24daf5bbfd874885ce83356f9d26a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7bf24daf5bbfd874885ce83356f9d26a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7bf24daf5bbfd874885ce83356f9d26a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7bf24daf5bbfd874885ce83356f9d26a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7bf24daf5bbfd874885ce83356f9d26a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7bf24daf5bbfd874885ce83356f9d26a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7bf24daf5bbfd874885ce83356f9d26a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7bf24daf5bbfd874885ce83356f9d26a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7bf24daf5bbfd874885ce83356f9d26a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7bf24daf5bbfd874885ce83356f9d26a, type: 3}
+      propertyPath: m_Name
+      value: Male monster Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 6954286866234546291, guid: 7bf24daf5bbfd874885ce83356f9d26a, type: 3}
+      propertyPath: m_Name
+      value: Auriphon
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -1719616684045937791, guid: 7bf24daf5bbfd874885ce83356f9d26a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8323911505864603806}
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7bf24daf5bbfd874885ce83356f9d26a, type: 3}
+--- !u!4 &7423033231672127201 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -1719616684045937791, guid: 7bf24daf5bbfd874885ce83356f9d26a, type: 3}
+  m_PrefabInstance: {fileID: 1090250276719820128}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &8362832753936686965
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7423033231672127201}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: eaefabae5094abb42865475d94a5ec51, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.0026881448
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: eaefabae5094abb42865475d94a5ec51, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.0026881443
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: eaefabae5094abb42865475d94a5ec51, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.0026881455
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: eaefabae5094abb42865475d94a5ec51, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.0009398144
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: eaefabae5094abb42865475d94a5ec51, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.007009515
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: eaefabae5094abb42865475d94a5ec51, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.01674765
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: eaefabae5094abb42865475d94a5ec51, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.76075166
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: eaefabae5094abb42865475d94a5ec51, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.649043
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: eaefabae5094abb42865475d94a5ec51, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.000004434957
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: eaefabae5094abb42865475d94a5ec51, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.00005471635
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: eaefabae5094abb42865475d94a5ec51, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: eaefabae5094abb42865475d94a5ec51, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: eaefabae5094abb42865475d94a5ec51, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -6058681868354798846, guid: eaefabae5094abb42865475d94a5ec51, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.337
+      objectReference: {fileID: 0}
+    - target: {fileID: -6058681868354798846, guid: eaefabae5094abb42865475d94a5ec51, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.793
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: eaefabae5094abb42865475d94a5ec51, type: 3}
+      propertyPath: m_Name
+      value: Male monster hair
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: eaefabae5094abb42865475d94a5ec51, type: 3}
+--- !u!4 &8323911505864603806 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: eaefabae5094abb42865475d94a5ec51, type: 3}
+  m_PrefabInstance: {fileID: 8362832753936686965}
+  m_PrefabAsset: {fileID: 0}
