@@ -23,7 +23,7 @@ namespace Assets.Entities
         [SerializeField]
         protected internal bool IsAlive = true;
 
-        public abstract void DealDamage(DamageSource damage);
+        public abstract void DealDamage(DamageSource source);
 
 
 
