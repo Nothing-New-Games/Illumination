@@ -30,7 +30,10 @@ public class Player : Alive
             _CurrentMovementSpeed = BaseMovementSpeed * RunMovementMultiplier;
         else _CurrentMovementSpeed = BaseMovementSpeed;
 
-        _Controller.Move(movementFactor * Time.deltaTime * _CurrentMovementSpeed);
+        /*This will create a bug most likely when the player dies. Likely the player will float, but I'm not
+        certain.*/
+        _Controller.SimpleMove(movementFactor * Time.deltaTime * _CurrentMovementSpeed);
+        //Tested, it most definitely does XD we know how to fix it, but let's wait to see what time is left.
     }
 
     public override void DealDamage(DamageSource source)
