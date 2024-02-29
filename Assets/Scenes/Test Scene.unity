@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748172, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -267,7 +267,7 @@ Transform:
   m_GameObject: {fileID: 108456209}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -26.188845, y: 3.6959674, z: -5.5830774}
+  m_LocalPosition: {x: -27.79, y: 3.6959674, z: -33.65}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -378,12 +378,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 300ed6f3e85191f4a9249fda5e101904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Controller: {fileID: 0}
+  BaseMovementSpeed: 400
+  RunMovementMultiplier: 2
+  MinDistanceToTarget: 1
+  MaxWanderDistXY: {x: 0, y: 0}
+  MinIdleDuration: 3
+  MaxIdleDuration: 5
+  CurrentAnimation: 0
+  CurrentTarget: {fileID: 0}
   CurrentHealth: 1
   MaxHealth: 1
   Damage: {x: 1, y: 1}
   IsAlive: 1
-  BaseMovementSpeed: 400
-  RunMovementMultiplier: 2
 --- !u!1 &441022670
 GameObject:
   m_ObjectHideFlags: 0
@@ -414,8 +421,8 @@ ParticleSystemForceField:
   m_Enabled: 1
   m_Parameters:
     m_Shape: 0
-    m_StartRange: 2.97
-    m_EndRange: 5
+    m_StartRange: 1.44
+    m_EndRange: 5.2
     m_Length: 1
     m_GravityFocus: 0
     m_RotationRandomness: {x: 0, y: 0}
@@ -580,30 +587,30 @@ ParticleSystemForceField:
         m_RotationOrder: 4
     m_GravityCurve:
       serializedVersion: 2
-      minMaxState: 0
-      scalar: 1.94
+      minMaxState: 1
+      scalar: 0.7
       minScalar: 1
       maxCurve:
         serializedVersion: 2
         m_Curve:
         - serializedVersion: 3
-          time: 0.020763397
-          value: 1.07547
+          time: 0
+          value: 0
           inSlope: 0
           outSlope: 0
           tangentMode: 0
           weightedMode: 0
-          inWeight: 0.33333334
-          outWeight: 0.33333334
+          inWeight: 0
+          outWeight: 0
         - serializedVersion: 3
           time: 1
           value: 1
-          inSlope: 0
-          outSlope: 0
+          inSlope: 2
+          outSlope: 2
           tangentMode: 0
           weightedMode: 0
-          inWeight: 0.33333334
-          outWeight: 0.33333334
+          inWeight: 0
+          outWeight: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
@@ -687,7 +694,7 @@ ParticleSystemForceField:
     m_RotationAttractionCurve:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.1
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -979,7 +986,7 @@ Transform:
   m_GameObject: {fileID: 441022670}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 21.92731, y: 4.074033, z: 5.236473}
+  m_LocalPosition: {x: 18.93, y: 4.074033, z: 5.34}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1301,7 +1308,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2837967774205882470, guid: b259a60e6b163634398aeb3b9834c3a6, type: 3}
       propertyPath: m_Name
-      value: Auriphon Variant
+      value: Auriphon
       objectReference: {fileID: 0}
     - target: {fileID: 3182263775281310428, guid: b259a60e6b163634398aeb3b9834c3a6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1344,8 +1351,28 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5506075268505487400, guid: b259a60e6b163634398aeb3b9834c3a6, type: 3}
+      propertyPath: Controller
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5506075268505487400, guid: b259a60e6b163634398aeb3b9834c3a6, type: 3}
+      propertyPath: CurrentTarget
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5506075268505487400, guid: b259a60e6b163634398aeb3b9834c3a6, type: 3}
       propertyPath: CurrentAnimation
-      value: 7
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5506075268505487400, guid: b259a60e6b163634398aeb3b9834c3a6, type: 3}
+      propertyPath: BaseMovementSpeed
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 5506075268505487400, guid: b259a60e6b163634398aeb3b9834c3a6, type: 3}
+      propertyPath: MaxWanderDistXY.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 5506075268505487400, guid: b259a60e6b163634398aeb3b9834c3a6, type: 3}
+      propertyPath: MaxWanderDistXY.y
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 8847744640732999846, guid: b259a60e6b163634398aeb3b9834c3a6, type: 3}
       propertyPath: m_Controller
@@ -1866,7 +1893,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 5
+      scalar: 0
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -2361,7 +2388,7 @@ ParticleSystem:
   ShapeModule:
     serializedVersion: 6
     enabled: 1
-    type: 4
+    type: 0
     angle: 25
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
@@ -2448,7 +2475,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 1
+      value: 10
       mode: 0
       spread: 0
       speed:
@@ -2673,7 +2700,7 @@ ParticleSystem:
     m_BurstCount: 0
     m_Bursts: []
   SizeModule:
-    enabled: 0
+    enabled: 1
     curve:
       serializedVersion: 2
       minMaxState: 1
@@ -2685,20 +2712,20 @@ ParticleSystem:
         - serializedVersion: 3
           time: 0
           value: 0
-          inSlope: 0
-          outSlope: 1
+          inSlope: 4.733641
+          outSlope: 4.733641
           tangentMode: 0
           weightedMode: 0
           inWeight: 0.33333334
-          outWeight: 0.33333334
+          outWeight: 0.08278867
         - serializedVersion: 3
-          time: 1
-          value: 1
-          inSlope: 1
-          outSlope: 0
+          time: 0.9869385
+          value: 0
+          inSlope: -2.849523
+          outSlope: -2.849523
           tangentMode: 0
           weightedMode: 0
-          inWeight: 0.33333334
+          inWeight: 0.08168737
           outWeight: 0.33333334
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -4382,11 +4409,11 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
   NoiseModule:
-    enabled: 0
+    enabled: 1
     strength:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: -0.33
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -4765,7 +4792,7 @@ ParticleSystem:
     positionAmount:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.19
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -5316,7 +5343,7 @@ ParticleSystem:
         m_NumAlphaKeys: 2
     range: {x: 0, y: 1}
   CollisionModule:
-    enabled: 0
+    enabled: 1
     serializedVersion: 4
     type: 0
     collisionMode: 0
@@ -6462,7 +6489,7 @@ Transform:
   m_GameObject: {fileID: 1723462306}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 21.92731, y: -1.396456, z: 5.236473}
+  m_LocalPosition: {x: 17.77, y: 3.14, z: 9.05}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

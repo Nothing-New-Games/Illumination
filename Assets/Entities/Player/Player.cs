@@ -1,24 +1,16 @@
 using Assets.Entities;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : Alive
 {
-    CharacterController _Controller;
-    public float BaseMovementSpeed = 5f;
-    public float RunMovementMultiplier = 2f;
-
-    private float _CurrentMovementSpeed = 0f;
-
-    // Start is called before the first frame update
-    void Awake()
+    internal override void Awake()
     {
-        _Controller = GetComponent<CharacterController>();
-    }
+        //Get the animator and controller
+        Controller = GetComponent<CharacterController>();
 
+    }
     // Update is called once per frame
-    void Update()
+    internal override void Update()
     {
         if (!IsAlive) return;
 
@@ -32,8 +24,12 @@ public class Player : Alive
 
         /*This will create a bug most likely when the player dies. Likely the player will float, but I'm not
         certain.*/
-        _Controller.SimpleMove(movementFactor * Time.deltaTime * _CurrentMovementSpeed);
+        Controller.SimpleMove(movementFactor * Time.deltaTime * _CurrentMovementSpeed);
         //Tested, it most definitely does XD we know how to fix it, but let's wait to see what time is left.
+    }
+    internal override void LateUpdate()
+    {
+        
     }
 
     public override void DealDamage(DamageSource source)
