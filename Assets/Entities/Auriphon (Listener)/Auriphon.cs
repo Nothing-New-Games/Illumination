@@ -12,9 +12,6 @@ public class Auriphon : Alive
 
     public override void OnDeath()
     {
-        //Set the current animation to dead.
-        CurrentAnimation = AnimationTrigger.Dead;
-        //Perform the animation
-        _Animator.SetTrigger(CurrentAnimation.ToString());
+        //These cannot take damage, so no death necessary.
     }
 }

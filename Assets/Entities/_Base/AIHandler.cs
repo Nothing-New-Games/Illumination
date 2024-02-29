@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Assets.Entities.AI
 {
     #region Animation Enum
-    public enum AnimationTrigger
+    public enum AnimationType
     {
         Idle, Walk, Run, Attack, Push, Jumping, Falling, Dead, IdleLong
     }
@@ -12,39 +12,49 @@ namespace Assets.Entities.AI
     public class AIHandler
     {
         private float _CurrentIdleTime = 0f;
-        private float _ChosenIdleDuration = 0f;
+        private float _ChosenIdleTime = 0f;
 
-        public AnimationTrigger Handle(Alive entity)
+        /// <summary>
+        /// Handles the AI and returns an enum of type AnimationType. This will be used to call the animation trigger for the model.
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public virtual AnimationType Handle(Alive entity)
         {
+            if (entity.PauseMovement)
+                return AnimationType.Idle;
+
+            #region Idle Animation
             //Idle = Current location
-            if (!entity.Engine.IsMoving && _CurrentIdleTime < _ChosenIdleDuration)
+            if (!entity.Engine.IsMoving && _CurrentIdleTime < _ChosenIdleTime)
             {
                 _CurrentIdleTime += Time.deltaTime;
-                return AnimationTrigger.Idle;
+                return AnimationType.Idle;
             }
-            else if (_CurrentIdleTime >= _ChosenIdleDuration)
+            else if (_CurrentIdleTime >= _ChosenIdleTime)
             {
                 _CurrentIdleTime = 0f;
-                _ChosenIdleDuration = Random.Range(entity.MinIdleDuration, entity.MaxIdleDuration);
+                _ChosenIdleTime = Random.Range(entity.MinIdleDuration, entity.MaxIdleDuration);
             }
+            #endregion
 
-            Vector3 NewDestination = Vector3.zero;
-            bool IsWalking = true;
+            #region Movement and Movement Animation
+            bool IsWalking = entity._CurrentMovementSpeedValue == entity.BaseMovementSpeed;
 
             //If the movement speed is faster than the base speed
-            if (entity._CurrentMovementSpeed > entity.BaseMovementSpeed)
+            if (!IsWalking)
             {
-                NewDestination = entity.CurrentTarget.transform.position;
-                IsWalking = false;
+                entity.Engine.UpdateVariables(entity, entity.CurrentTarget.transform.position);
             }
             //If movement speed is the base speed
-            else if (entity._CurrentMovementSpeed == entity.BaseMovementSpeed)
+            else if (IsWalking && entity.Engine.IsCloseToDestination())
             {
-                //Engine should be called here.
-                //Takes arguments for Destination. 
-                //First calculate the destination.
-                NewDestination = GetNewDestination(entity); //Using this until we find out how we actually wanna calculate.
+                //Calculate the new destination
+                entity.Engine.UpdateVariables(entity, GetNewDestination(entity));
             }
+            #endregion
+
+            #region Attack and Attack Animation
             //Check if we are close enough to the target to attack
             if (entity.CurrentTarget != null)
                 if (Vector3.Distance(entity.CurrentTarget.transform.position, entity.transform.position) <= entity.MinDistanceToTarget)
@@ -53,16 +63,17 @@ namespace Assets.Entities.AI
                     //Call method from Entity.Attack?
 
                     //Return the attack animation.
-                    return AnimationTrigger.Attack;
+                    return AnimationType.Attack;
                 }
+            #endregion
 
 
-            //Move to target destination.
-            entity.Engine.MoveTo(NewDestination, entity);
+            //Move to chosen destination.
+            entity.Engine.MoveToDestination();
 
             if (IsWalking)
-                return AnimationTrigger.Walk;
-            else return AnimationTrigger.Run;
+                return AnimationType.Walk;
+            else return AnimationType.Run;
         }
 
         private Vector3 GetNewDestination(Alive entity)
