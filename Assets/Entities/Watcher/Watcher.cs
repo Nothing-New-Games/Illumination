@@ -1,8 +1,9 @@
-using UnityEngine;
 using Assets.Entities;
-using Assets.Entities.AI;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-public class Auriphon : Alive
+public class Watcher : Alive
 {
     public override void DealDamage(DamageSource source)
     {

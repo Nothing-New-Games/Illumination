@@ -1,26 +1,18 @@
 ﻿using Assets.EDO;
 using Assets.Entities.AI;
 using UnityEngine;
+using Sirenix.OdinInspector;
 
 namespace Assets.Entities
 {
     [RequireComponent(typeof(CharacterController))]
     public abstract class Alive : MonoBehaviour, ISender
     {
-        public CharacterController Controller;
-        public float BaseMovementSpeed = 5f;
-        public float RunMovementMultiplier = 2f;
-        public float MinDistanceToTarget = 1f;
-        public Vector2 MaxWanderDistXY;
-        public float MinIdleDuration = 3f;
-        public float MaxIdleDuration = 15f;
-        protected internal float _CurrentMovementSpeed = 0f;
+        #region Variables
+        protected internal CharacterController Controller;
 
         protected internal Animator _Animator;
-        public AnimationTrigger CurrentAnimation;
-
-        [SerializeField]
-        protected internal Alive CurrentTarget;
+        public AnimationType CurrentAnimation;
         /// <summary>
         /// If you are replacing the engine with a custom one, override the start method.
         /// </summary>
@@ -29,24 +21,41 @@ namespace Assets.Entities
         /// If you are replacing the AI with a custom one, override the start method.
         /// </summary>
         protected internal AIHandler AI;
-
-        /// <summary>
-        /// The current health of the entity.
-        /// </summary>
-        [SerializeField]
-        protected internal float CurrentHealth = 1f;
-        /// <summary>
-        /// The max health the entity will have.
-        /// </summary>
-        [SerializeField]
-        protected internal float MaxHealth = 1f;
-        /// <summary>
-        /// Min/Max damage the entity can do with an attack.
-        /// </summary>
-        [SerializeField]
-        protected internal Vector2 Damage = new Vector2(1, 1);
         [SerializeField]
         protected internal bool IsAlive = true;
+
+        [TabGroup("Main", "Movement")]
+        public bool PauseMovement;
+        [TabGroup("Main", "Movement")]
+        public float BaseMovementSpeed = 5f;
+        [TabGroup("Main", "Movement")]
+        public float RunMovementMultiplier = 2f;
+        [TabGroup("Main", "Movement")]
+        public float MinDistanceToTarget = 1f;
+        [TabGroup("Main", "Movement")]
+        public Vector2 MaxWanderDistXY;
+        [TabGroup("Main", "Movement")]
+        public float MinIdleDuration = 3f;
+        [TabGroup("Main", "Movement")]
+        public float MaxIdleDuration = 15f;
+        [TabGroup("Main", "Movement")]
+        public float PositioningCorrectionDistance = 3f;
+        protected internal float _CurrentMovementSpeedValue = 0f;
+
+        [SerializeField]
+        [TabGroup("Main", "Movement")]
+        protected internal Alive CurrentTarget;
+
+        [SerializeField]
+        [TabGroup("Main", "Stats"), Tooltip("The current health of the entity.")]
+        protected internal float CurrentHealth = 1f;
+        [SerializeField]
+        [TabGroup("Main", "Stats"), Tooltip("The max health the entity will have.")]
+        protected internal float MaxHealth = 1f;
+        [SerializeField]
+        [TabGroup("Main", "Stats"), Tooltip("Min/Max damage the entity can do with an attack.")]
+        protected internal Vector2 Damage = new Vector2(1, 1);
+        #endregion
 
 
         protected internal bool AnimatorIsPlaying()
@@ -54,9 +63,16 @@ namespace Assets.Entities
             if (_Animator != null)
                 return _Animator.GetCurrentAnimatorStateInfo(0).length >
                    _Animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
-            else return true;
+            
+            return true;
         }
-
+        protected internal bool CloseToTarget()
+        {
+            if (CurrentTarget != null)
+                return Vector3.Distance(transform.position, CurrentTarget.transform.position) <= MinDistanceToTarget;
+            
+            return false;
+        }
 
         public abstract void DealDamage(DamageSource source);
 
@@ -87,11 +103,13 @@ namespace Assets.Entities
         {
             Controller = GetComponent<CharacterController>();
             _Animator = GetComponent<Animator>();
+            AI = new();
+            Engine = new();
+            Engine.UpdateVariables(this, transform.position);
         }
         internal virtual void Start()
         {
-            AI = new();
-            Engine = new();
+
         }
         internal virtual void Update()
         {
@@ -109,11 +127,17 @@ namespace Assets.Entities
             }
 
 
+            _Animator.ResetTrigger(CurrentAnimation.ToString());
             //Get the animation that is supposed to be playing.
             //AI method that returns enum of the current animation.
             //The AI will handle the movement calculations and return the proper animation.
             CurrentAnimation = AI.Handle(this);
-            _Animator.SetTrigger(CurrentAnimation.ToString());
+
+            if (!_Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name.ToLower().Contains(CurrentAnimation.ToString().ToLower()))
+            {
+                //Debug.Log("Good news, everyone!");
+                _Animator.SetTrigger(CurrentAnimation.ToString());
+            }
         }
         internal virtual void FixedUpdate()
         {
@@ -122,6 +146,38 @@ namespace Assets.Entities
         internal virtual void OnDestroy()
         {
 
+        }
+
+
+
+        [TabGroup("Main", "Debug")]
+        public bool DebugData = false;
+        [ShowIf("@DebugData == true"), TabGroup("Main", "Debug")]
+        public float DestinationGizmoSize = 1f;
+        [ShowIf("@DebugData == true"), TabGroup("Main", "Debug")]
+        public Color DestinationColor = Color.cyan;
+        [ShowIf("@DebugData == true"), TabGroup("Main", "Debug")]
+        public bool DrawDestinationDistanceGizmo = false;
+        [ShowIf("@DebugData == true && DrawDestinationDistanceGizmo"), TabGroup("Main", "Debug")]
+        public Color DestinationDistanceColor = Color.red;
+
+        internal virtual void OnDrawGizmos()
+        {
+            if (DebugData)
+            {
+                if (Engine != null)
+                {
+                    Gizmos.color = DestinationColor;
+                    Gizmos.DrawWireSphere(Engine.GetCurrentDest, DestinationGizmoSize);
+
+                    if (DrawDestinationDistanceGizmo)
+                    {
+                        Gizmos.color = DestinationDistanceColor;
+                        Gizmos.DrawLine(Engine.GetCurrentDest, Engine.GetCurrentDest + Vector3.Normalize(transform.position - Engine.GetCurrentDest));
+                    }
+                }
+
+            }
         }
         #endregion
     }

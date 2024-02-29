@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Assets.Entities.AI
@@ -6,24 +7,34 @@ namespace Assets.Entities.AI
     {
         private float MinDistanceToDest { get; set; }
         private Vector3 CurrentDestination { get; set; }
-        private Vector3 CurrentPosition { get; set; }
-        public bool IsMoving => Vector3.Distance(CurrentDestination, CurrentPosition) > MinDistanceToDest;
+        public Vector3 GetCurrentDest => CurrentDestination;
 
-        protected internal virtual void UpdateVariables(Alive entity)
+        private Vector3 CurrentPosition { get; set; }
+        private Alive _Entity {  get; set; }
+        public bool IsMoving => Vector3.Distance(CurrentDestination, CurrentPosition) > MinDistanceToDest;
+        public bool IsCloseToDestination()
+        {
+            if (_Entity != null)
+                return Vector3.Distance(_Entity.transform.position, CurrentDestination) <= MinDistanceToDest;
+
+            return true;
+        }
+
+        protected internal virtual void UpdateVariables(Alive entity, Vector3 destination = default)
         {
             MinDistanceToDest = entity.MinDistanceToTarget;
             CurrentPosition = entity.transform.position;
+            _Entity = entity;
+            if (destination != default)
+                CurrentDestination = destination;
         }
 
-        protected internal virtual void MoveTo(Vector3 destination, Alive entity)
+        protected internal virtual void MoveToDestination()
         {
-            UpdateVariables(entity);
-            CurrentDestination = destination;
-
             #region Error Handling
-            if (entity.Controller == null)
+            if (_Entity.Controller == null)
             {
-                Debug.LogError($"Error! No controller found on {entity.name}! This component is required for the default AI!");
+                Debug.LogError($"Error! No controller found on {_Entity.name}! This component is required for the default AI!");
                 return;
             }
             #endregion
@@ -32,20 +43,37 @@ namespace Assets.Entities.AI
             //If we are, Check what direction to go
 
 
-            //Check if running
-            if (entity.CurrentTarget != null)
-                entity._CurrentMovementSpeed = entity.BaseMovementSpeed * entity.RunMovementMultiplier;
-            else entity._CurrentMovementSpeed = entity.BaseMovementSpeed;
+            //Update speed for if we need to run.
+            if (_Entity.CurrentTarget != null)
+                _Entity._CurrentMovementSpeedValue = _Entity.BaseMovementSpeed * _Entity.RunMovementMultiplier;
+            else _Entity._CurrentMovementSpeedValue = _Entity.BaseMovementSpeed;
 
             if (IsMoving)
             {
                 /*Get the normalized direction of the destination from the entity. (Normalize because we
                 don't want to make the movement faster when the destination is farther away).*/
-                Vector3 movementFactor = Vector3.Normalize(destination - entity.transform.position);
-                entity.transform.rotation = Quaternion.Euler(destination - entity.transform.position);
+                Vector3 temp = Vector3.Normalize(CurrentDestination - _Entity.transform.position);
+                Vector3 movementFactor = new Vector3(temp.x, _Entity.transform.position.y, temp.z);
+                _Entity.transform.LookAt(CurrentDestination);
+
+                Ray ray = new Ray(_Entity.transform.position, _Entity.transform.forward * Vector3.Distance(_Entity.transform.position, CurrentDestination));
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit))
+                {
+                    if (_Entity.CurrentTarget != null)
+                    {
+                        //We handle this slightly different because we want the creature to be close before attacking where as a wall, we want them to be a comfortable distance away.
+                        CurrentDestination = new Vector3(hit.point.x - _Entity.MinDistanceToTarget, hit.point.y, hit.point.z - _Entity.MinDistanceToTarget);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("There is an object in the way! Correcting position so as to not get stuck on a wall or some such!");
+                        CurrentDestination = new Vector3(hit.point.x - _Entity.PositioningCorrectionDistance, hit.point.y, hit.point.z - _Entity.PositioningCorrectionDistance);
+                    }
+                }
 
                 //Move to destination.
-                entity.Controller.SimpleMove(movementFactor * entity._CurrentMovementSpeed * Time.deltaTime);
+                _Entity.Controller.SimpleMove(movementFactor * _Entity._CurrentMovementSpeedValue * Time.deltaTime);
             }
         }
     }

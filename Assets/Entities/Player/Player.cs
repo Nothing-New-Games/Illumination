@@ -19,12 +19,12 @@ public class Player : Alive
         /*Currently, diaginal is faster and I can fix that by adding more conditions to check if the player is
         moving diaginally, but I got too much other stuff to do LMAO*/
         if (Input.GetKey(KeyCode.LeftShift))
-            _CurrentMovementSpeed = BaseMovementSpeed * RunMovementMultiplier;
-        else _CurrentMovementSpeed = BaseMovementSpeed;
+            _CurrentMovementSpeedValue = BaseMovementSpeed * RunMovementMultiplier;
+        else _CurrentMovementSpeedValue = BaseMovementSpeed;
 
         /*This will create a bug most likely when the player dies. Likely the player will float, but I'm not
         certain.*/
-        Controller.SimpleMove(movementFactor * Time.deltaTime * _CurrentMovementSpeed);
+        Controller.SimpleMove(movementFactor * Time.deltaTime * _CurrentMovementSpeedValue);
         //Tested, it most definitely does XD we know how to fix it, but let's wait to see what time is left.
     }
     internal override void LateUpdate()
