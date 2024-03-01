@@ -31,7 +31,9 @@ namespace Assets.Entities
         [TabGroup("Main", "Movement")]
         public float RunMovementMultiplier = 2f;
         [TabGroup("Main", "Movement")]
-        public float MinDistanceToTarget = 1f;
+        public float MinDistanceToDestination = 1f;
+        [TabGroup("Main", "Movement")]
+        public float MinDistanceToTarget = 3f;
         [TabGroup("Main", "Movement")]
         public Vector2 MaxWanderDistXY;
         [TabGroup("Main", "Movement")]
@@ -55,6 +57,16 @@ namespace Assets.Entities
         [SerializeField]
         [TabGroup("Main", "Stats"), Tooltip("Min/Max damage the entity can do with an attack.")]
         protected internal Vector2 Damage = new Vector2(1, 1);
+
+        [TabGroup("Main", "Stats"), Min(0), MaxValue(180), SerializeField]
+        [Tooltip("The creature's ability to see things around them. 180 = complete 360 vision (Don't ask, that's how Unity works), 0 = Blind.")]
+        protected internal float MaxAngleDetection = 40f;
+        [TabGroup("Main", "Stats"), SerializeField]
+        [Tooltip("The creature's ability to see things in front of them.")]
+        protected internal float MaxDetectionDistance = 30f;
+        [TabGroup("Main", "Stats"), SerializeField]
+        [Tooltip("The creatures base chance to detect the player. The higher it is, the more likely it is.")]
+        protected internal float BaseDetectionChance = 100f;
         #endregion
 
 
@@ -69,7 +81,7 @@ namespace Assets.Entities
         protected internal bool CloseToTarget()
         {
             if (CurrentTarget != null)
-                return Vector3.Distance(transform.position, CurrentTarget.transform.position) <= MinDistanceToTarget;
+                return Vector3.Distance(transform.position, CurrentTarget.transform.position) <= MinDistanceToDestination;
             
             return false;
         }
@@ -103,10 +115,16 @@ namespace Assets.Entities
         {
             Controller = GetComponent<CharacterController>();
             _Animator = GetComponent<Animator>();
-            AI = new();
-            Engine = new();
+            _CurrentMovementSpeedValue = BaseMovementSpeed;
+            CreateAI();
+            CreateEngine();
             Engine.UpdateVariables(this, transform.position);
         }
+
+        internal virtual void CreateAI() => AI = new();
+
+        internal virtual void CreateEngine() => Engine = new();
+
         internal virtual void Start()
         {
 
@@ -152,14 +170,30 @@ namespace Assets.Entities
 
         [TabGroup("Main", "Debug")]
         public bool DebugData = false;
-        [ShowIf("@DebugData == true"), TabGroup("Main", "Debug")]
+
+        [TabGroup("Main", "Debug"), ShowIf("@DebugData == true")]
+        public bool DrawDestinationGizmo = false;
+        [ShowIf("@DebugData == true && DrawDestinationGizmo"), TabGroup("Main", "Debug")]
         public float DestinationGizmoSize = 1f;
-        [ShowIf("@DebugData == true"), TabGroup("Main", "Debug")]
+        [ShowIf("@DebugData == true && DrawDestinationGizmo"), TabGroup("Main", "Debug")]
         public Color DestinationColor = Color.cyan;
-        [ShowIf("@DebugData == true"), TabGroup("Main", "Debug")]
+
+        [ShowIf("@DebugData == true && DrawDestinationGizmo"), TabGroup("Main", "Debug")]
         public bool DrawDestinationDistanceGizmo = false;
         [ShowIf("@DebugData == true && DrawDestinationDistanceGizmo"), TabGroup("Main", "Debug")]
         public Color DestinationDistanceColor = Color.red;
+
+        [ShowIf("@DebugData == true"), TabGroup("Main", "Debug")]
+        public bool DrawSightAngles = false;
+        [ShowIf("@DebugData == true && DrawSightAngles"), TabGroup("Main", "Debug")]
+        public Vector3 AngleVisualOffset = new();
+        [ShowIf("@DebugData == true && DrawSightAngles"), TabGroup("Main", "Debug")]
+        public Color SightGizmoColor = Color.yellow;
+
+        [ShowIf("@DebugData == true"), TabGroup("Main", "Debug")]
+        public bool DrawDistanceToPlayerGizmo = false;
+        [ShowIf("@DebugData == true && DrawDistanceToPlayerGizmo"), TabGroup("Main", "Debug")]
+        public Color DistanceToPlayerColor = Color.blue;
 
         internal virtual void OnDrawGizmos()
         {
@@ -167,13 +201,37 @@ namespace Assets.Entities
             {
                 if (Engine != null)
                 {
-                    Gizmos.color = DestinationColor;
-                    Gizmos.DrawWireSphere(Engine.GetCurrentDest, DestinationGizmoSize);
+                    //Destination
+                    if (DrawDestinationGizmo)
+                    {
+                        Gizmos.color = DestinationColor;
+                        Gizmos.DrawWireSphere(Engine.GetCurrentDest, DestinationGizmoSize);
+                    }
 
+                    //Distance to Destination
                     if (DrawDestinationDistanceGizmo)
                     {
                         Gizmos.color = DestinationDistanceColor;
                         Gizmos.DrawLine(Engine.GetCurrentDest, Engine.GetCurrentDest + Vector3.Normalize(transform.position - Engine.GetCurrentDest));
+                    }
+
+                    //Sight Angle
+                    if (DrawSightAngles)
+                    {
+                        //This is correct up until after the offset.
+                        //Left
+                        Gizmos.color = SightGizmoColor;
+                        Gizmos.DrawLine(transform.position + AngleVisualOffset, Engine.GetCurrentDest + Vector3.Normalize(transform.position - Engine.GetCurrentDest));
+                        //Right
+                        Gizmos.color = SightGizmoColor;
+                        Gizmos.DrawLine(transform.position + AngleVisualOffset, Engine.GetCurrentDest + Vector3.Normalize(transform.position - Engine.GetCurrentDest));
+                    }
+
+                    //Distance to Player
+                    if (DrawDistanceToPlayerGizmo && CurrentTarget != null)
+                    {
+                        Gizmos.color = DistanceToPlayerColor;
+                        Gizmos.DrawLine(CurrentTarget.transform.position, CurrentTarget.transform.position + Vector3.Normalize(transform.position - CurrentTarget.transform.position));
                     }
                 }
 

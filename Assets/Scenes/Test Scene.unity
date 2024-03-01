@@ -242,6 +242,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &62535837
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 858257769938287316, guid: 75c1fd535ed97d648a40d896d451e442, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 858257769938287316, guid: 75c1fd535ed97d648a40d896d451e442, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.19
+      objectReference: {fileID: 0}
+    - target: {fileID: 858257769938287316, guid: 75c1fd535ed97d648a40d896d451e442, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -8.52
+      objectReference: {fileID: 0}
+    - target: {fileID: 858257769938287316, guid: 75c1fd535ed97d648a40d896d451e442, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 858257769938287316, guid: 75c1fd535ed97d648a40d896d451e442, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 858257769938287316, guid: 75c1fd535ed97d648a40d896d451e442, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 858257769938287316, guid: 75c1fd535ed97d648a40d896d451e442, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 858257769938287316, guid: 75c1fd535ed97d648a40d896d451e442, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 858257769938287316, guid: 75c1fd535ed97d648a40d896d451e442, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 858257769938287316, guid: 75c1fd535ed97d648a40d896d451e442, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1125893812907979515, guid: 75c1fd535ed97d648a40d896d451e442, type: 3}
+      propertyPath: m_Name
+      value: Zara
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 75c1fd535ed97d648a40d896d451e442, type: 3}
 --- !u!1 &108456209
 GameObject:
   m_ObjectHideFlags: 0
@@ -289,7 +346,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6298733948645520204, guid: 4b70e3e353823b04f8828b064ad29a10, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.75
+      value: 0.04
       objectReference: {fileID: 0}
     - target: {fileID: 6298733948645520204, guid: 4b70e3e353823b04f8828b064ad29a10, type: 3}
       propertyPath: m_LocalPosition.z
@@ -327,12 +384,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Watcher
       objectReference: {fileID: 0}
+    - target: {fileID: 6638949666023401974, guid: 4b70e3e353823b04f8828b064ad29a10, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 6298733948645520204, guid: 4b70e3e353823b04f8828b064ad29a10, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 963194228}
+    m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6638949666023401974, guid: 4b70e3e353823b04f8828b064ad29a10, type: 3}
       insertIndex: -1
@@ -449,6 +507,7 @@ MonoBehaviour:
   PauseMovement: 0
   BaseMovementSpeed: 400
   RunMovementMultiplier: 2
+  MinDistanceToDestination: 1
   MinDistanceToTarget: 1
   MaxWanderDistXY: {x: 0, y: 0}
   MinIdleDuration: 3
@@ -458,11 +517,20 @@ MonoBehaviour:
   CurrentHealth: 1
   MaxHealth: 1
   Damage: {x: 1, y: 1}
+  MaxAngleDetection: 40
+  MaxDetectionDistance: 30
+  BaseDetectionChance: 100
   DebugData: 0
+  DrawDestinationGizmo: 0
   DestinationGizmoSize: 1
   DestinationColor: {r: 0, g: 0, b: 0, a: 0}
   DrawDestinationDistanceGizmo: 0
   DestinationDistanceColor: {r: 1, g: 0, b: 0, a: 1}
+  DrawSightAngles: 0
+  AngleVisualOffset: {x: 0, y: 0, z: 0}
+  SightGizmoColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  DrawDistanceToPlayerGizmo: 0
+  DistanceToPlayerColor: {r: 0, g: 0, b: 1, a: 1}
 --- !u!1 &441022670
 GameObject:
   m_ObjectHideFlags: 0
@@ -1204,20 +1272,30 @@ MonoBehaviour:
   PauseMovement: 0
   BaseMovementSpeed: 200
   RunMovementMultiplier: 5
+  MinDistanceToDestination: 1
   MinDistanceToTarget: 1
   MaxWanderDistXY: {x: 30, y: 30}
   MinIdleDuration: 3
   MaxIdleDuration: 15
   PositioningCorrectionDistance: 3
   CurrentTarget: {fileID: 0}
-  CurrentHealth: 1
-  MaxHealth: 1
+  CurrentHealth: 500
+  MaxHealth: 500
   Damage: {x: 1, y: 1}
+  MaxAngleDetection: 40
+  MaxDetectionDistance: 30
+  BaseDetectionChance: 100
   DebugData: 0
+  DrawDestinationGizmo: 0
   DestinationGizmoSize: 1
   DestinationColor: {r: 0, g: 1, b: 1, a: 1}
   DrawDestinationDistanceGizmo: 0
   DestinationDistanceColor: {r: 1, g: 0, b: 0, a: 1}
+  DrawSightAngles: 0
+  AngleVisualOffset: {x: 0, y: 0, z: 0}
+  SightGizmoColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  DrawDistanceToPlayerGizmo: 0
+  DistanceToPlayerColor: {r: 0, g: 0, b: 1, a: 1}
 --- !u!143 &513522553
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1244,11 +1322,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0.27, y: 2.67, z: 0.89}
---- !u!4 &513522555 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6298733948645520204, guid: 4b70e3e353823b04f8828b064ad29a10, type: 3}
-  m_PrefabInstance: {fileID: 141930345}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &609540109
 GameObject:
   m_ObjectHideFlags: 0
@@ -1498,12 +1571,24 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5506075268505487400, guid: b259a60e6b163634398aeb3b9834c3a6, type: 3}
+      propertyPath: MaxHealth
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5506075268505487400, guid: b259a60e6b163634398aeb3b9834c3a6, type: 3}
       propertyPath: Controller
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5506075268505487400, guid: b259a60e6b163634398aeb3b9834c3a6, type: 3}
+      propertyPath: CurrentHealth
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5506075268505487400, guid: b259a60e6b163634398aeb3b9834c3a6, type: 3}
       propertyPath: CurrentTarget
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5506075268505487400, guid: b259a60e6b163634398aeb3b9834c3a6, type: 3}
+      propertyPath: DrawSightAngles
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5506075268505487400, guid: b259a60e6b163634398aeb3b9834c3a6, type: 3}
       propertyPath: CurrentAnimation
@@ -1511,7 +1596,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5506075268505487400, guid: b259a60e6b163634398aeb3b9834c3a6, type: 3}
       propertyPath: BaseMovementSpeed
-      value: 255
+      value: 225
       objectReference: {fileID: 0}
     - target: {fileID: 5506075268505487400, guid: b259a60e6b163634398aeb3b9834c3a6, type: 3}
       propertyPath: MaxWanderDistXY.x
@@ -1538,8 +1623,16 @@ PrefabInstance:
       value: 0.02616591
       objectReference: {fileID: 0}
     - target: {fileID: 5506075268505487400, guid: b259a60e6b163634398aeb3b9834c3a6, type: 3}
+      propertyPath: DrawDestinationGizmo
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5506075268505487400, guid: b259a60e6b163634398aeb3b9834c3a6, type: 3}
+      propertyPath: DrawDistanceToPlayerGizmo
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5506075268505487400, guid: b259a60e6b163634398aeb3b9834c3a6, type: 3}
       propertyPath: DrawDestinationDistanceGizmo
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8847744640732999846, guid: b259a60e6b163634398aeb3b9834c3a6, type: 3}
       propertyPath: m_Controller
@@ -1638,12 +1731,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.06, z: -2.15}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 158.5, y: 1.0999999, z: 146.15001}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 513522555}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &992471293
 GameObject:
@@ -6675,3 +6768,5 @@ SceneRoots:
   - {fileID: 716523363}
   - {fileID: 609540111}
   - {fileID: 141930345}
+  - {fileID: 62535837}
+  - {fileID: 963194228}

@@ -5,12 +5,12 @@ namespace Assets.Entities.AI
 {
     public class MovementEngine
     {
-        private float MinDistanceToDest { get; set; }
-        private Vector3 CurrentDestination { get; set; }
+        protected internal float MinDistanceToDest { get; set; }
+        protected internal Vector3 CurrentDestination { get; set; }
         public Vector3 GetCurrentDest => CurrentDestination;
 
-        private Vector3 CurrentPosition { get; set; }
-        private Alive _Entity {  get; set; }
+        protected internal Vector3 CurrentPosition { get; set; }
+        protected internal Alive _Entity {  get; set; }
         public bool IsMoving => Vector3.Distance(CurrentDestination, CurrentPosition) > MinDistanceToDest;
         public bool IsCloseToDestination()
         {
@@ -22,7 +22,7 @@ namespace Assets.Entities.AI
 
         protected internal virtual void UpdateVariables(Alive entity, Vector3 destination = default)
         {
-            MinDistanceToDest = entity.MinDistanceToTarget;
+            MinDistanceToDest = entity.MinDistanceToDestination;
             CurrentPosition = entity.transform.position;
             _Entity = entity;
             if (destination != default)
@@ -44,9 +44,7 @@ namespace Assets.Entities.AI
 
 
             //Update speed for if we need to run.
-            if (_Entity.CurrentTarget != null)
-                _Entity._CurrentMovementSpeedValue = _Entity.BaseMovementSpeed * _Entity.RunMovementMultiplier;
-            else _Entity._CurrentMovementSpeedValue = _Entity.BaseMovementSpeed;
+            UpdateMovementSpeed();
 
             if (IsMoving)
             {
@@ -63,7 +61,7 @@ namespace Assets.Entities.AI
                     if (_Entity.CurrentTarget != null)
                     {
                         //We handle this slightly different because we want the creature to be close before attacking where as a wall, we want them to be a comfortable distance away.
-                        CurrentDestination = new Vector3(hit.point.x - _Entity.MinDistanceToTarget, hit.point.y, hit.point.z - _Entity.MinDistanceToTarget);
+                        CurrentDestination = new Vector3(hit.point.x - _Entity.MinDistanceToDestination, hit.point.y, hit.point.z - _Entity.MinDistanceToDestination);
                     }
                     else
                     {
@@ -75,6 +73,13 @@ namespace Assets.Entities.AI
                 //Move to destination.
                 _Entity.Controller.SimpleMove(movementFactor * _Entity._CurrentMovementSpeedValue * Time.deltaTime);
             }
+        }
+
+        internal virtual void UpdateMovementSpeed()
+        {
+            if (_Entity.CurrentTarget != null)
+                _Entity._CurrentMovementSpeedValue = _Entity.BaseMovementSpeed * _Entity.RunMovementMultiplier;
+            else _Entity._CurrentMovementSpeedValue = _Entity.BaseMovementSpeed;
         }
     }
 }

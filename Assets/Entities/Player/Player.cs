@@ -3,10 +3,21 @@ using UnityEngine;
 
 public class Player : Alive
 {
+    public static Transform PlayerInstance { get; private set; }
+
+
     internal override void Awake()
     {
         //Get the animator and controller
         Controller = GetComponent<CharacterController>();
+
+        if (PlayerInstance == null)
+            PlayerInstance = transform;
+        else
+        {
+            Debug.LogWarning("Multiple players found in the scene! Disabling the second one to show up!");
+            enabled = false;
+        }
 
     }
     // Update is called once per frame
