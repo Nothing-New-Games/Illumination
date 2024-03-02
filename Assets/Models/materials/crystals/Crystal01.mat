@@ -18,13 +18,14 @@ Material:
   - _RIM2STYLE_POIYOMI
   - _RIMSTYLE_POIYOMI
   - _STOCHASTICMODE_DELIOT_HEITZ
+  - _SUNDISK_SIMPLE
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2000
+  m_CustomRenderQueue: 2450
   stringTagMap:
-    RenderType: Opaque
+    RenderType: TransparentCutout
   disabledShaderPasses: []
   m_LockedProperties: _EnableOutlines
   m_SavedProperties:
@@ -587,7 +588,7 @@ Material:
     - _AddBlendOpAlpha: 0
     - _AddDstBlend: 1
     - _AddDstBlendAlpha: 1
-    - _AddSrcBlend: 1
+    - _AddSrcBlend: 5
     - _AddSrcBlendAlpha: 0
     - _Add_Antipodean_Rim2Light: 0
     - _Add_Antipodean_RimLight: 0
@@ -1076,7 +1077,7 @@ Material:
     - _DistortionStrength1AudioLinkBand: 0
     - _DistortionStrengthAudioLinkBand: 0
     - _DistortionUvToDistort: 0
-    - _DstBlend: 0
+    - _DstBlend: 10
     - _DstBlendAlpha: 1
     - _EmissionAL0Enabled: 0
     - _EmissionAL0MultipliersBand: 0
@@ -1098,15 +1099,15 @@ Material:
     - _EmissionBlinkingEnabled1: 0
     - _EmissionBlinkingEnabled2: 0
     - _EmissionBlinkingEnabled3: 0
-    - _EmissionBlinkingOffset: 0
+    - _EmissionBlinkingOffset: 80
     - _EmissionBlinkingOffset1: 0
     - _EmissionBlinkingOffset2: 0
     - _EmissionBlinkingOffset3: 0
-    - _EmissionCenterOutEnabled: 0
+    - _EmissionCenterOutEnabled: 1
     - _EmissionCenterOutEnabled1: 0
     - _EmissionCenterOutEnabled2: 0
     - _EmissionCenterOutEnabled3: 0
-    - _EmissionCenterOutSpeed: 5
+    - _EmissionCenterOutSpeed: 0.5
     - _EmissionCenterOutSpeed1: 5
     - _EmissionCenterOutSpeed2: 5
     - _EmissionCenterOutSpeed3: 5
@@ -1166,19 +1167,19 @@ Material:
     - _EmissionScrollingVertexColor1: 0
     - _EmissionScrollingVertexColor2: 0
     - _EmissionScrollingVertexColor3: 0
-    - _EmissionStrength: 1
+    - _EmissionStrength: 1.5
     - _EmissionStrength1: 0
     - _EmissionStrength2: 0
     - _EmissionStrength3: 0
-    - _EmissiveBlink_Max: 0.8
+    - _EmissiveBlink_Max: 1
     - _EmissiveBlink_Max1: 1
     - _EmissiveBlink_Max2: 1
     - _EmissiveBlink_Max3: 1
-    - _EmissiveBlink_Min: 0
+    - _EmissiveBlink_Min: 0.4
     - _EmissiveBlink_Min1: 0
     - _EmissiveBlink_Min2: 0
     - _EmissiveBlink_Min3: 0
-    - _EmissiveBlink_Velocity: 1
+    - _EmissiveBlink_Velocity: 0.2
     - _EmissiveBlink_Velocity1: 4
     - _EmissiveBlink_Velocity2: 4
     - _EmissiveBlink_Velocity3: 4
@@ -1286,16 +1287,16 @@ Material:
     - _GITDEWorldOrMesh2: 0
     - _GITDEWorldOrMesh3: 0
     - _GlitterAngleRange: 90
-    - _GlitterBias: 0.8
+    - _GlitterBias: 0
     - _GlitterBlendType: 0
     - _GlitterBrightness: 3
     - _GlitterCenterSize: 0.08
     - _GlitterColorMapUV: 0
     - _GlitterColorThemeIndex: 0
-    - _GlitterContrast: 300
-    - _GlitterEnable: 0
-    - _GlitterFrequency: 300
-    - _GlitterHideInShadow: 0
+    - _GlitterContrast: 1000
+    - _GlitterEnable: 1
+    - _GlitterFrequency: 200
+    - _GlitterHideInShadow: 1
     - _GlitterHueShift: 0
     - _GlitterHueShiftEnabled: 0
     - _GlitterHueShiftSpeed: 0
@@ -1311,12 +1312,12 @@ Material:
     - _GlitterRandomRotation: 0
     - _GlitterRandomSize: 0
     - _GlitterShape: 0
-    - _GlitterSize: 0.3
-    - _GlitterSpeed: 10
+    - _GlitterSize: 0.342
+    - _GlitterSpeed: 1
     - _GlitterTextureRotation: 0
     - _GlitterUV: 0
-    - _GlitterUseNormals: 0
-    - _GlitterUseSurfaceColor: 0
+    - _GlitterUseNormals: 1
+    - _GlitterUseSurfaceColor: 1
     - _GlobalMaskBackface_0: 0
     - _GlobalMaskBackface_1: 0
     - _GlobalMaskBackface_10: 0
@@ -1871,7 +1872,7 @@ Material:
     - _MochieSpecularStrengthGlobalMask: 0
     - _MochieSpecularStrengthGlobalMaskBlendType: 2
     - _MochieSpecularTintThemeIndex: 0
-    - _Mode: 0
+    - _Mode: 9
     - _ModelAngleMax: 90
     - _ModelAngleMin: 45
     - _MultilayerMathBlurMapUV: 0
@@ -1891,8 +1892,8 @@ Material:
     - _OutlineBlendOpAlpha: 4
     - _OutlineClipAtZeroWidth: 0
     - _OutlineCull: 1
-    - _OutlineDstBlend: 0
-    - _OutlineDstBlendAlpha: 0
+    - _OutlineDstBlend: 10
+    - _OutlineDstBlendAlpha: 1
     - _OutlineEmission: 0.1
     - _OutlineExpansionMode: 1
     - _OutlineFixWidth: 0.5
@@ -1906,7 +1907,7 @@ Material:
     - _OutlineRimLightBlend: 0
     - _OutlineShadowStrength: 0
     - _OutlineSpace: 0
-    - _OutlineSrcBlend: 1
+    - _OutlineSrcBlend: 5
     - _OutlineSrcBlendAlpha: 1
     - _OutlineStencilBackCompareFunction: 8
     - _OutlineStencilBackFailOp: 0
@@ -2229,7 +2230,7 @@ Material:
     - _SphericalDissolveClamp: 0
     - _SphericalDissolveInvert: 0
     - _SphericalDissolveRadius: 1.5
-    - _SrcBlend: 1
+    - _SrcBlend: 5
     - _SrcBlendAlpha: 1
     - _SssBumpBlur: 0.7
     - _SssScale: 1
@@ -2717,7 +2718,7 @@ Material:
     - m_start_emission3Options: 0
     - m_start_emissionOptions: 1
     - m_start_flipBook: 0
-    - m_start_glitter: 0
+    - m_start_glitter: 1
     - m_start_internalparallax: 0
     - m_start_matcap: 0
     - m_start_mirrorOptions: 0
@@ -2999,7 +3000,7 @@ Material:
     - _LightingShadowColor: {r: 1, g: 1, b: 1, a: 1}
     - _LightingShadowMasksPan: {r: 0, g: 0, b: 0, a: 0}
     - _LightngForcedDirection: {r: 0, g: 0, b: 0, a: 1}
-    - _LineColor: {r: 0.509434, g: 0.50222504, b: 0.50222504, a: 1}
+    - _LineColor: {r: 0.44061694, g: 0.15917587, b: 0.6886792, a: 1}
     - _MainColorAdjustTexturePan: {r: 0, g: 0, b: 0, a: 0}
     - _MainTexPan: {r: 0, g: 0, b: 0, a: 0}
     - _MatCap2ndBlendUV1: {r: 0, g: 0, b: 0, a: 0}

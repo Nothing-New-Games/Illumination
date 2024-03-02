@@ -9,13 +9,13 @@ public class AuriphonEngine : MovementEngine
 
     internal override void UpdateMovementSpeed()
     {
-        if (_StartingAnimationSpeed == 0)
-            _StartingAnimationSpeed = _Entity._Animator.speed;
+        //if (_StartingAnimationSpeed == 0)
+        //    _StartingAnimationSpeed = _Entity._Animator.speed;
 
         base.UpdateMovementSpeed();
 
-        if (_Entity.CurrentTarget != null)
-            _Entity._Animator.speed = _Entity.RunMovementMultiplier * _StartingAnimationSpeed;
-        else _Entity._Animator.speed = _StartingAnimationSpeed;
+        //if (_Entity.CurrentTarget != null)
+        //    _Entity._Animator.speed = _Entity.RunMovementMultiplier * _StartingAnimationSpeed;
+        //else _Entity._Animator.speed = _StartingAnimationSpeed;
     }
 }

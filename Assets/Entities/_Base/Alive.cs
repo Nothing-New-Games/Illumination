@@ -2,6 +2,7 @@
 using Assets.Entities.AI;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using System.Collections.Generic;
 
 namespace Assets.Entities
 {
@@ -12,6 +13,7 @@ namespace Assets.Entities
         protected internal CharacterController Controller;
 
         protected internal Animator _Animator;
+        [ReadOnly]
         public AnimationType CurrentAnimation;
         /// <summary>
         /// If you are replacing the engine with a custom one, override the start method.
@@ -46,7 +48,7 @@ namespace Assets.Entities
 
         [SerializeField]
         [TabGroup("Main", "Movement")]
-        protected internal Alive CurrentTarget;
+        protected internal Alive CurrentTarget/* { get; set; }*/;
 
         [SerializeField]
         [TabGroup("Main", "Stats"), Tooltip("The current health of the entity.")]
@@ -58,9 +60,9 @@ namespace Assets.Entities
         [TabGroup("Main", "Stats"), Tooltip("Min/Max damage the entity can do with an attack.")]
         protected internal Vector2 Damage = new Vector2(1, 1);
 
-        [TabGroup("Main", "Stats"), Min(0), MaxValue(180), SerializeField]
+        [TabGroup("Main", "Stats"), Range(1, 360), SerializeField]
         [Tooltip("The creature's ability to see things around them. 180 = complete 360 vision (Don't ask, that's how Unity works), 0 = Blind.")]
-        protected internal float MaxAngleDetection = 40f;
+        protected internal float MaxAngleDetection = 20;
         [TabGroup("Main", "Stats"), SerializeField]
         [Tooltip("The creature's ability to see things in front of them.")]
         protected internal float MaxDetectionDistance = 30f;
@@ -214,27 +216,32 @@ namespace Assets.Entities
                         Gizmos.color = DestinationDistanceColor;
                         Gizmos.DrawLine(Engine.GetCurrentDest, Engine.GetCurrentDest + Vector3.Normalize(transform.position - Engine.GetCurrentDest));
                     }
+                }
 
-                    //Sight Angle
-                    if (DrawSightAngles)
+                //Sight Angle
+                if (DrawSightAngles)
+                {
+                    Gizmos.color = SightGizmoColor;
+                    if (MaxAngleDetection < 360)
                     {
-                        //This is correct up until after the offset.
                         //Left
-                        Gizmos.color = SightGizmoColor;
-                        Gizmos.DrawLine(transform.position + AngleVisualOffset, Engine.GetCurrentDest + Vector3.Normalize(transform.position - Engine.GetCurrentDest));
+                        Gizmos.DrawLine(transform.position + AngleVisualOffset, AngleVisualOffset + transform.position + (Quaternion.Euler(0, MaxAngleDetection / 2, 0) * (Vector3.forward * MaxDetectionDistance)));
                         //Right
-                        Gizmos.color = SightGizmoColor;
-                        Gizmos.DrawLine(transform.position + AngleVisualOffset, Engine.GetCurrentDest + Vector3.Normalize(transform.position - Engine.GetCurrentDest));
+                        Gizmos.DrawLine(transform.position + AngleVisualOffset, (AngleVisualOffset + transform.position + (Quaternion.Euler(0, -MaxAngleDetection / 2, 0) * (Vector3.forward * MaxDetectionDistance))));
                     }
-
-                    //Distance to Player
-                    if (DrawDistanceToPlayerGizmo && CurrentTarget != null)
+                    else
                     {
-                        Gizmos.color = DistanceToPlayerColor;
-                        Gizmos.DrawLine(CurrentTarget.transform.position, CurrentTarget.transform.position + Vector3.Normalize(transform.position - CurrentTarget.transform.position));
+                        Gizmos.DrawWireSphere(transform.position + AngleVisualOffset, MaxDetectionDistance);
                     }
                 }
 
+
+                //Distance to Player
+                if (DrawDistanceToPlayerGizmo && CurrentTarget != null)
+                {
+                    Gizmos.color = DistanceToPlayerColor;
+                    Gizmos.DrawLine(CurrentTarget.transform.position, CurrentTarget.transform.position + Vector3.Normalize(transform.position - CurrentTarget.transform.position));
+                }
             }
         }
         #endregion

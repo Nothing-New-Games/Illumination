@@ -10,6 +10,7 @@ public class Player : Alive
     {
         //Get the animator and controller
         Controller = GetComponent<CharacterController>();
+        _Animator = GetComponentInChildren<Animator>();
 
         if (PlayerInstance == null)
             PlayerInstance = transform;
@@ -27,17 +28,24 @@ public class Player : Alive
 
         Vector3 movementFactor = new(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
-        /*Currently, diaginal is faster and I can fix that by adding more conditions to check if the player is
-        moving diaginally, but I got too much other stuff to do LMAO*/
+        /*Currently, diagonal is faster and I can fix that by adding more conditions to check if the player is
+        moving diagonal, but I got too much other stuff to do LMAO*/
         if (Input.GetKey(KeyCode.LeftShift))
             _CurrentMovementSpeedValue = BaseMovementSpeed * RunMovementMultiplier;
         else _CurrentMovementSpeedValue = BaseMovementSpeed;
+        HandlePlayerMovement(movementFactor);
+    }
 
+    private void HandlePlayerMovement(Vector3 movementFactor)
+    {
         /*This will create a bug most likely when the player dies. Likely the player will float, but I'm not
-        certain.*/
+                certain.*/
         Controller.SimpleMove(movementFactor * Time.deltaTime * _CurrentMovementSpeedValue);
         //Tested, it most definitely does XD we know how to fix it, but let's wait to see what time is left.
+
+        //Invoke an event for movement.
     }
+
     internal override void LateUpdate()
     {
         

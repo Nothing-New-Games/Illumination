@@ -53,7 +53,7 @@ namespace Assets.Entities.AI
             bool IsWalking = entity._CurrentMovementSpeedValue == entity.BaseMovementSpeed;
 
             //If the movement speed is faster than the base speed
-            if (!IsWalking)
+            if (!IsWalking && entity.CurrentTarget != null)
             {
                 entity.Engine.UpdateVariables(entity, entity.CurrentTarget.transform.position);
             }
