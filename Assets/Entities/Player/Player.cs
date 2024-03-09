@@ -20,31 +20,19 @@ public class Player : Alive
             enabled = false;
         }
 
+
+        AI = new PlayerAI();
+        Engine = new PlayerEngine();
     }
     // Update is called once per frame
     internal override void Update()
     {
         if (!IsAlive) return;
 
-        Vector3 movementFactor = new(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-
-        /*Currently, diagonal is faster and I can fix that by adding more conditions to check if the player is
-        moving diagonal, but I got too much other stuff to do LMAO*/
-        if (Input.GetKey(KeyCode.LeftShift))
-            _CurrentMovementSpeedValue = BaseMovementSpeed * RunMovementMultiplier;
-        else _CurrentMovementSpeedValue = BaseMovementSpeed;
-        HandlePlayerMovement(movementFactor);
+        CurrentAnimation = AI.Handle(this);
     }
 
-    private void HandlePlayerMovement(Vector3 movementFactor)
-    {
-        /*This will create a bug most likely when the player dies. Likely the player will float, but I'm not
-                certain.*/
-        Controller.SimpleMove(movementFactor * Time.deltaTime * _CurrentMovementSpeedValue);
-        //Tested, it most definitely does XD we know how to fix it, but let's wait to see what time is left.
-
-        //Invoke an event for movement.
-    }
+    
 
     internal override void LateUpdate()
     {

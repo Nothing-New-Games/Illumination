@@ -3,17 +3,47 @@ using Assets.Entities.AI;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 namespace Assets.Entities
 {
     [RequireComponent(typeof(CharacterController))]
     public abstract class Alive : MonoBehaviour, ISender
     {
+        public static List<Alive> LivingCreatures { get; } = new();
+
+        [SerializeField, ShowInInspector]
+        protected internal List<Alive> NearbyCreatures { get; } = new();
+        public float MinInteractDistance = 3f;
+
+        protected internal void UpdateNearbyCreaturesList()
+        {
+            NearbyCreatures.Clear();
+
+            foreach (var creature in LivingCreatures)
+            {
+                if (Vector3.Distance(transform.position, creature.transform.position) <= MinInteractDistance)
+                {
+                    NearbyCreatures.Add(creature);
+                }
+            }
+        }
+
+        [Button]
+        protected internal void RegisterAlive()
+        {
+            if (!LivingCreatures.Contains(this))
+                LivingCreatures.Add(this);
+            else Debug.LogWarning($"{name} is already registered as a living creature!");
+        }
+
+
+
         #region Variables
         protected internal CharacterController Controller;
 
         protected internal Animator _Animator;
-        [ReadOnly]
+        [ReadOnly, DisplayAsString]
         public AnimationType CurrentAnimation;
         /// <summary>
         /// If you are replacing the engine with a custom one, override the start method.
@@ -69,6 +99,8 @@ namespace Assets.Entities
         [TabGroup("Main", "Stats"), SerializeField]
         [Tooltip("The creatures base chance to detect the player. The higher it is, the more likely it is.")]
         protected internal float BaseDetectionChance = 100f;
+
+        private float meshHeight = 0f;
         #endregion
 
 
@@ -79,6 +111,26 @@ namespace Assets.Entities
                    _Animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
             
             return true;
+        }
+        protected internal bool IsGrounded()
+        {
+            Ray ray = new Ray(transform.position, -transform.up);
+            RaycastHit hit;
+            Physics.Raycast(ray, out hit, 0.3f + meshHeight /2);
+            if (hit.transform != null)
+                return hit.transform.tag == "Walkable";
+            else return false;
+        }
+        protected internal void FindEntityHeight()
+        {
+            Collider collider = GetComponentInChildren<Collider>();
+            if (collider == null)
+            {
+                Debug.LogWarning("Could not find mesh renderer! One last attempt to grab it!");
+                collider = GetComponent<Collider>();
+            }
+
+            meshHeight = collider.bounds.size.y;
         }
         protected internal bool CloseToTarget()
         {
@@ -121,6 +173,8 @@ namespace Assets.Entities
             CreateAI();
             CreateEngine();
             Engine.UpdateVariables(this, transform.position);
+            FindEntityHeight();
+            LivingCreatures.Add(this);
         }
 
         internal virtual void CreateAI() => AI = new();
@@ -129,7 +183,8 @@ namespace Assets.Entities
 
         internal virtual void Start()
         {
-
+            if (!LivingCreatures.Contains(this))
+                LivingCreatures.Add(this);
         }
         internal virtual void Update()
         {
@@ -165,7 +220,15 @@ namespace Assets.Entities
         }
         internal virtual void OnDestroy()
         {
-
+            LivingCreatures.Remove(this);
+        }
+        internal virtual void OnDisable()
+        {
+            LivingCreatures.Remove(this);
+        }
+        internal virtual void OnEnable()
+        {
+            LivingCreatures.Add(this);
         }
 
 
@@ -197,6 +260,18 @@ namespace Assets.Entities
         [ShowIf("@DebugData == true && DrawDistanceToPlayerGizmo"), TabGroup("Main", "Debug")]
         public Color DistanceToPlayerColor = Color.blue;
 
+        [ShowIf("@DebugData == true"), TabGroup("Main", "Debug")]
+        public bool DrawNearbyCreaturesGizmo = false;
+        [ShowIf("@DebugData == true && DrawDistanceToPlayerGizmo"), TabGroup("Main", "Debug")]
+        public Color NearbyCreaturesColor = Color.red;
+
+        [ShowIf("@DebugData == true"), TabGroup("Main", "Debug")]
+        public bool DrawFeetPositionCalculation = false;
+        [ShowIf("@DebugData == true"), TabGroup("Main", "Debug")]
+        public float FeetPositionGizmoSize = 0.3f;
+        [ShowIf("@DebugData == true && DrawDistanceToPlayerGizmo"), TabGroup("Main", "Debug")]
+        public Color FeetPositionColor = Color.white;
+
         internal virtual void OnDrawGizmos()
         {
             if (DebugData)
@@ -225,9 +300,9 @@ namespace Assets.Entities
                     if (MaxAngleDetection < 360)
                     {
                         //Left
-                        Gizmos.DrawLine(transform.position + AngleVisualOffset, AngleVisualOffset + transform.position + (Quaternion.Euler(0, MaxAngleDetection / 2, 0) * (Vector3.forward * MaxDetectionDistance)));
+                        Gizmos.DrawLine(transform.position + AngleVisualOffset, AngleVisualOffset + transform.position + (Quaternion.Euler(0, MaxAngleDetection / 2, 0) * (transform.forward * MaxDetectionDistance)));
                         //Right
-                        Gizmos.DrawLine(transform.position + AngleVisualOffset, (AngleVisualOffset + transform.position + (Quaternion.Euler(0, -MaxAngleDetection / 2, 0) * (Vector3.forward * MaxDetectionDistance))));
+                        Gizmos.DrawLine(transform.position + AngleVisualOffset, (AngleVisualOffset + transform.position + (Quaternion.Euler(0, -MaxAngleDetection / 2, 0) * (transform.forward * MaxDetectionDistance))));
                     }
                     else
                     {
@@ -241,6 +316,22 @@ namespace Assets.Entities
                 {
                     Gizmos.color = DistanceToPlayerColor;
                     Gizmos.DrawLine(CurrentTarget.transform.position, CurrentTarget.transform.position + Vector3.Normalize(transform.position - CurrentTarget.transform.position));
+                }
+
+                //Distance to Nearby Creatures
+                if (DrawNearbyCreaturesGizmo && NearbyCreatures.Count > 0)
+                {
+                    Gizmos.color = NearbyCreaturesColor;
+                    foreach(var creature in NearbyCreatures)
+                    {
+                        Gizmos.DrawLine(transform.position, creature.transform.position);
+                    }
+                }
+
+                if (DrawFeetPositionCalculation)
+                {
+                    Gizmos.color = FeetPositionColor;
+                    Gizmos.DrawWireSphere(new Vector3(transform.position.x, transform.position.y - (meshHeight /2), transform.position.z), FeetPositionGizmoSize);
                 }
             }
         }

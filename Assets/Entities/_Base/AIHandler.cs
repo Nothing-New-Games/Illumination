@@ -7,7 +7,7 @@ namespace Assets.Entities.AI
     #region Animation Enum
     public enum AnimationType
     {
-        Idle, Walk, Run, Attack, Push, Jumping, Falling, Dead, IdleLong
+        Idle, Walk, Run, Attack, Push, Jumping, Falling, Dead, IdleLong, CrouchIdle, CrouchWalk, CrouchRun, 
     }
     #endregion
     public class AIHandler
@@ -37,7 +37,7 @@ namespace Assets.Entities.AI
 
             #region Idle Animation
             //Idle = Current location
-            if (!entity.Engine.IsMoving && _CurrentIdleTime < _ChosenIdleTime)
+            if (!entity.Engine.IsMoving() && _CurrentIdleTime < _ChosenIdleTime)
             {
                 _CurrentIdleTime += Time.deltaTime;
                 return AnimationType.Idle;
@@ -103,20 +103,20 @@ namespace Assets.Entities.AI
         /// <summary>
         /// Searches for the player and returns true if they have been detected.
         /// </summary>
-        /// <param name="entity">The entity searching for the player.</param>
-        protected internal virtual bool SearchForTarget(Alive entity)
+        /// <param name="thisEntity">The entity searching for the player.</param>
+        protected internal virtual bool SearchForTarget(Alive thisEntity)
         {
             //Define the chance of detecting the player. We will take away from this value the less likely the entity is to detect them.
-            float DetectionChance = entity.BaseDetectionChance;
+            float DetectionChance = thisEntity.BaseDetectionChance;
             float FailureChance = 0f;
 
             //Start by getting the distance to the player.
-            float DistanceToPlayer = Vector3.Distance(entity.transform.position, Player.PlayerInstance.position);
-            float AngleToPlayer = Vector3.Angle(entity.transform.forward, entity.transform.position - Player.PlayerInstance.position);
+            float DistanceToPlayer = Vector3.Distance(thisEntity.transform.position, Player.PlayerInstance.position);
+            float AngleToPlayer = Vector3.Angle(thisEntity.transform.forward, thisEntity.transform.position - Player.PlayerInstance.position);
 
-            if (DistanceToPlayer < entity.MaxDetectionDistance)
+            if (DistanceToPlayer < thisEntity.MaxDetectionDistance)
                 FailureChance = DetectionChance;
-            if (AngleToPlayer > entity.MaxAngleDetection)
+            if (AngleToPlayer > thisEntity.MaxAngleDetection)
                 FailureChance += 30f;
 
             DetectionChance -= FailureChance;
@@ -125,11 +125,19 @@ namespace Assets.Entities.AI
                 return false;
 
             float DetectionAttempt = Random.Range(0, DetectionChance);
-            bool PlayerDetected = DetectionChance / entity.BaseDetectionChance >= DetectionAttempt;
+            bool PlayerDetected = DetectionChance / thisEntity.BaseDetectionChance >= DetectionAttempt;
 
-            Debug.Log($"The current Manhattan distance from the player to {entity.name} is {DistanceToPlayer} at an angle of {AngleToPlayer}.\nWas the player found with a chance of {DetectionChance}? {PlayerDetected}");
+            //Debug.Log($"The current Manhattan distance from the player to {thisEntity.name} is {DistanceToPlayer} at an angle of {AngleToPlayer}.\nWas the player found with a chance of {DetectionChance}? {PlayerDetected}");
 
             return PlayerDetected;
+        }
+
+        protected internal virtual IInteractable NearestInteractable()
+        {
+
+
+
+            return null;
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Assets.Entities.AI
 
         protected internal Vector3 CurrentPosition { get; set; }
         protected internal Alive _Entity {  get; set; }
-        public bool IsMoving => Vector3.Distance(CurrentDestination, CurrentPosition) > MinDistanceToDest;
+        public virtual bool IsMoving() => Vector3.Distance(CurrentDestination, CurrentPosition) > MinDistanceToDest;
         public bool IsCloseToDestination()
         {
             if (_Entity != null)
@@ -46,7 +46,7 @@ namespace Assets.Entities.AI
             //Update speed for if we need to run.
             UpdateMovementSpeed();
 
-            if (IsMoving)
+            if (IsMoving())
             {
                 /*Get the normalized direction of the destination from the entity. (Normalize because we
                 don't want to make the movement faster when the destination is farther away).*/
