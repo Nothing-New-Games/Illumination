@@ -53,9 +53,9 @@ namespace Assets.Entities.AI
             bool IsWalking = entity._CurrentMovementSpeedValue == entity.BaseMovementSpeed;
 
             //If the movement speed is faster than the base speed
-            if (!IsWalking && entity.CurrentTarget != null)
+            if (!IsWalking && entity.CurrentLivingTarget != null)
             {
-                entity.Engine.UpdateVariables(entity, entity.CurrentTarget.transform.position);
+                entity.Engine.UpdateVariables(entity, entity.CurrentLivingTarget.transform.position);
             }
             //If movement speed is the base speed
             else if (IsWalking && entity.Engine.IsCloseToDestination())
@@ -67,12 +67,12 @@ namespace Assets.Entities.AI
 
             #region Attack and Attack Animation
             //Check if we are close enough to the target to attack
-            if (entity.CurrentTarget != null)
-                if (Vector3.Distance(entity.CurrentTarget.transform.position, entity.transform.position) <= entity.MinDistanceToTarget)
+            if (entity.CurrentLivingTarget != null)
+                if (Vector3.Distance(entity.CurrentLivingTarget.transform.position, entity.transform.position) <= entity.MinDistanceToTarget)
                 {
                     //Handle attacking the target.
                     //Call method from Entity.Attack?
-                    entity.CurrentTarget.DealDamage(new DamageSource(entity.gameObject, Random.Range(entity.Damage.x, entity.Damage.y)));
+                    entity.CurrentLivingTarget.DealDamage(new DamageSource(entity.gameObject, Random.Range(entity.Damage.x, entity.Damage.y)));
 
                     //Return the attack animation.
                     return AnimationType.Attack;

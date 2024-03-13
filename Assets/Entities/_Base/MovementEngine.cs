@@ -58,7 +58,7 @@ namespace Assets.Entities.AI
                 RaycastHit hit;
                 if (Physics.Raycast(ray, out hit))
                 {
-                    if (_Entity.CurrentTarget != null)
+                    if (_Entity.CurrentLivingTarget != null)
                     {
                         //We handle this slightly different because we want the creature to be close before attacking where as a wall, we want them to be a comfortable distance away.
                         CurrentDestination = new Vector3(hit.point.x - _Entity.MinDistanceToDestination, hit.point.y, hit.point.z - _Entity.MinDistanceToDestination);
@@ -77,7 +77,7 @@ namespace Assets.Entities.AI
 
         internal virtual void UpdateMovementSpeed()
         {
-            if (_Entity.CurrentTarget != null)
+            if (_Entity.CurrentLivingTarget != null)
                 _Entity._CurrentMovementSpeedValue = _Entity.BaseMovementSpeed * _Entity.RunMovementMultiplier;
             else _Entity._CurrentMovementSpeedValue = _Entity.BaseMovementSpeed;
         }

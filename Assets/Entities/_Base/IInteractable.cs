@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Entities
 {
@@ -15,5 +13,12 @@ namespace Assets.Entities
 
         internal protected static void RegisterInteractable(IInteractable caller) => Interactables.Add(caller);
         public void Interact();
+
+        public T GetComponent<T>()
+        {
+            if (this is MonoBehaviour monoBehaviour)
+                return monoBehaviour.gameObject.GetComponent<T>();
+            else throw new Exception("This interactable does not inherit from MonoBehavior!");
+        }
     }
 }

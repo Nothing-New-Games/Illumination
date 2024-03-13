@@ -15,8 +15,20 @@ public class PlayerAI : AIHandler
 
     public override AnimationType Handle(Alive entity)
     {
-        Vector3 movementFactor = new(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        Player player = entity as Player;
+        Camera playerCamera = player.MainCamera;
+        playerCamera.transform.position += playerCamera.transform.up * Player.MouseY * player.CameraSensitivity
+                                            +
+                                          playerCamera.transform.right * Player.MouseX * player.CameraSensitivity;
 
+        //Forward and Backward
+        Vector3 movementFactor = playerCamera.transform.forward * Input.GetAxis("Vertical")
+                                 +
+                                 //Left and Right
+                                 playerCamera.transform.right * Input.GetAxis("Horizontal");
+
+
+        //movementFactor = entity.transform.forward * movementFactor.magnitude;
 
 
 
@@ -49,13 +61,14 @@ public class PlayerAI : AIHandler
             {
                 entity._CurrentMovementSpeedValue = entity.BaseMovementSpeed * entity.RunMovementMultiplier;
                 isRunning = true;
-                
+
             }
             else if (playerEngine.IsMoving())
             {
                 entity._CurrentMovementSpeedValue = entity.BaseMovementSpeed;
                 isRunning = false;
             }
+            else isRunning = false;
         }
 
         //Do player engine stoof
