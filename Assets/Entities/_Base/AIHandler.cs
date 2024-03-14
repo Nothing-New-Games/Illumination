@@ -7,7 +7,11 @@ namespace Assets.Entities.AI
     #region Animation Enum
     public enum AnimationType
     {
-        Idle, Walk, Run, Attack, Push, Jumping, Falling, Dead, IdleLong, CrouchIdle, CrouchWalk, CrouchRun, 
+        /// <summary>
+        /// This enum souly exists to say "Let us finish the current animation!"
+        /// </summary>
+        PreventMovement, 
+        Idle, Walk, Run, Attack, Push, Jumping, Falling, Dead, CrouchIdle, CrouchWalk, CrouchRun, Touch, Touchdown, Loot
     }
     #endregion
     public class AIHandler

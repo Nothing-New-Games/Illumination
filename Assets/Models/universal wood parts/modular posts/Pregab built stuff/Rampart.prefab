@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6722394137688999094}
   - component: {fileID: 4690580325317579046}
   - component: {fileID: 5247054849038278541}
+  - component: {fileID: 2080205398589494268}
   m_Layer: 0
   m_Name: SmallWooddubleSpike1 (2)
   m_TagString: Untagged
@@ -83,6 +84,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &2080205398589494268
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 24502671134559317}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -80433500902388114, guid: 8a796e57c8fd3e34fad99316fb05978c, type: 3}
 --- !u!1 &1604664954402663416
 GameObject:
   m_ObjectHideFlags: 0
@@ -94,6 +117,7 @@ GameObject:
   - component: {fileID: 1297809950576051259}
   - component: {fileID: 8443471517886107251}
   - component: {fileID: 3039336183790633421}
+  - component: {fileID: 2132414961436418739}
   m_Layer: 0
   m_Name: SmallWooddubleSpike1
   m_TagString: Untagged
@@ -166,6 +190,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &2132414961436418739
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1604664954402663416}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -80433500902388114, guid: 8a796e57c8fd3e34fad99316fb05978c, type: 3}
 --- !u!1 &2190044253522120748
 GameObject:
   m_ObjectHideFlags: 0
@@ -177,6 +223,7 @@ GameObject:
   - component: {fileID: 8783199725803687272}
   - component: {fileID: 5027524092654870818}
   - component: {fileID: 2511283644885728021}
+  - component: {fileID: 844389401979068466}
   m_Layer: 0
   m_Name: SmallWooddubleSpike1 (1)
   m_TagString: Untagged
@@ -249,6 +296,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &844389401979068466
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2190044253522120748}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -80433500902388114, guid: 8a796e57c8fd3e34fad99316fb05978c, type: 3}
 --- !u!1 &2422506229684988542
 GameObject:
   m_ObjectHideFlags: 0
@@ -260,6 +329,7 @@ GameObject:
   - component: {fileID: 6768886874603811350}
   - component: {fileID: 511416843788724463}
   - component: {fileID: 5203096860908312277}
+  - component: {fileID: 1216109929825429844}
   m_Layer: 0
   m_Name: SmallWooddubleSpike3 (1)
   m_TagString: Untagged
@@ -333,6 +403,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &1216109929825429844
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2422506229684988542}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -6479174032108211211, guid: 8a796e57c8fd3e34fad99316fb05978c, type: 3}
 --- !u!1 &2580266695752991220
 GameObject:
   m_ObjectHideFlags: 0
@@ -344,6 +436,7 @@ GameObject:
   - component: {fileID: 5727613725242750183}
   - component: {fileID: 5761843687742763254}
   - component: {fileID: 8064006496741276707}
+  - component: {fileID: 4042604767739658583}
   m_Layer: 0
   m_Name: SmallWooddubleSpike3
   m_TagString: Untagged
@@ -417,6 +510,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &4042604767739658583
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2580266695752991220}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -6479174032108211211, guid: 8a796e57c8fd3e34fad99316fb05978c, type: 3}
 --- !u!1 &2824765275595326804
 GameObject:
   m_ObjectHideFlags: 0
@@ -428,6 +543,7 @@ GameObject:
   - component: {fileID: 7330572175926837532}
   - component: {fileID: 3016045761200773289}
   - component: {fileID: 6976076843529789002}
+  - component: {fileID: 1783972614229647069}
   m_Layer: 0
   m_Name: SmallWooddubleSpike2 (4)
   m_TagString: Untagged
@@ -500,6 +616,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &1783972614229647069
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2824765275595326804}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 8608861719314871198, guid: 8a796e57c8fd3e34fad99316fb05978c, type: 3}
 --- !u!1 &5257730847670648170
 GameObject:
   m_ObjectHideFlags: 0
@@ -511,6 +649,7 @@ GameObject:
   - component: {fileID: 2921061482516666971}
   - component: {fileID: 5895183271513357389}
   - component: {fileID: 8467842113140225248}
+  - component: {fileID: 1127066269782140592}
   m_Layer: 0
   m_Name: SmallWooddubleSpike3 (2)
   m_TagString: Untagged
@@ -584,6 +723,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &1127066269782140592
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5257730847670648170}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -6479174032108211211, guid: 8a796e57c8fd3e34fad99316fb05978c, type: 3}
 --- !u!1 &5385874890524374141
 GameObject:
   m_ObjectHideFlags: 0
@@ -595,6 +756,7 @@ GameObject:
   - component: {fileID: 2644120701081512040}
   - component: {fileID: 178477893493235164}
   - component: {fileID: 8906349608760437243}
+  - component: {fileID: 6321121677003823321}
   m_Layer: 0
   m_Name: SmallWooddubleSpike1 (3)
   m_TagString: Untagged
@@ -667,6 +829,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &6321121677003823321
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5385874890524374141}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -80433500902388114, guid: 8a796e57c8fd3e34fad99316fb05978c, type: 3}
 --- !u!1 &5843335574485780285
 GameObject:
   m_ObjectHideFlags: 0
@@ -678,6 +862,7 @@ GameObject:
   - component: {fileID: 5918039511037703962}
   - component: {fileID: 7660103045471378553}
   - component: {fileID: 5945553405695720511}
+  - component: {fileID: 5015807656327563265}
   m_Layer: 0
   m_Name: SmallWooddubleSpike3 (3)
   m_TagString: Untagged
@@ -751,6 +936,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &5015807656327563265
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5843335574485780285}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -6479174032108211211, guid: 8a796e57c8fd3e34fad99316fb05978c, type: 3}
 --- !u!1 &7134323619109625977
 GameObject:
   m_ObjectHideFlags: 0
@@ -762,6 +969,7 @@ GameObject:
   - component: {fileID: 2400735838542130662}
   - component: {fileID: 8432610833759905425}
   - component: {fileID: 3685035676321058483}
+  - component: {fileID: 1829934978692643705}
   m_Layer: 0
   m_Name: SmallWooddubleSpike2 (3)
   m_TagString: Untagged
@@ -834,6 +1042,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &1829934978692643705
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7134323619109625977}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 8608861719314871198, guid: 8a796e57c8fd3e34fad99316fb05978c, type: 3}
 --- !u!1 &8568761606627684925
 GameObject:
   m_ObjectHideFlags: 0
@@ -845,6 +1075,7 @@ GameObject:
   - component: {fileID: 120238291433367599}
   - component: {fileID: 7880483878540083289}
   - component: {fileID: 7349944966627984574}
+  - component: {fileID: 864559275692151586}
   m_Layer: 0
   m_Name: SmallWooddubleSpike2 (2)
   m_TagString: Untagged
@@ -917,6 +1148,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &864559275692151586
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8568761606627684925}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 8608861719314871198, guid: 8a796e57c8fd3e34fad99316fb05978c, type: 3}
 --- !u!1 &8836531531912018604
 GameObject:
   m_ObjectHideFlags: 0
@@ -928,6 +1181,7 @@ GameObject:
   - component: {fileID: 1252433544403114998}
   - component: {fileID: 5004069982936907195}
   - component: {fileID: 7698363339810249219}
+  - component: {fileID: 1757665643725571633}
   m_Layer: 0
   m_Name: SmallWooddubleSpike2
   m_TagString: Untagged
@@ -1000,6 +1254,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &1757665643725571633
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8836531531912018604}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 8608861719314871198, guid: 8a796e57c8fd3e34fad99316fb05978c, type: 3}
 --- !u!1 &9113333154297725857
 GameObject:
   m_ObjectHideFlags: 0

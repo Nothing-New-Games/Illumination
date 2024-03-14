@@ -32,7 +32,7 @@ namespace Assets.Entities.AI
         protected internal virtual void MoveToDestination()
         {
             #region Error Handling
-            if (_Entity.Controller == null)
+            if (_Entity.RB == null)
             {
                 Debug.LogError($"Error! No controller found on {_Entity.name}! This component is required for the default AI!");
                 return;
@@ -50,28 +50,36 @@ namespace Assets.Entities.AI
             {
                 /*Get the normalized direction of the destination from the entity. (Normalize because we
                 don't want to make the movement faster when the destination is farther away).*/
-                Vector3 temp = Vector3.Normalize(CurrentDestination - _Entity.transform.position);
-                Vector3 movementFactor = new Vector3(temp.x, _Entity.transform.position.y, temp.z);
-                _Entity.transform.LookAt(CurrentDestination);
+                //Vector3 temp = Vector3.Normalize(CurrentDestination - _Entity.transform.position);
+                //Vector3 movementFactor = new Vector3(temp.x, _Entity.transform.position.y, temp.z);
 
-                Ray ray = new Ray(_Entity.transform.position, _Entity.transform.forward * Vector3.Distance(_Entity.transform.position, CurrentDestination));
+                Vector3 CurrentDestinationWithoutYPos = new Vector3(CurrentDestination.x, _Entity.transform.position.y, CurrentDestination.z);
+
+                Vector3 movementFactor = Vector3.Normalize(CurrentDestinationWithoutYPos - _Entity.transform.position);
+                movementFactor.y = 0;
+
+                _Entity.transform.LookAt(CurrentDestinationWithoutYPos);
+
+                Ray ray = new Ray(_Entity.transform.position, _Entity.transform.forward);
                 RaycastHit hit;
-                if (Physics.Raycast(ray, out hit))
+                LayerMask mask = ~LayerMask.GetMask(LayerMask.LayerToName(_Entity.gameObject.layer));
+
+                if (Physics.Raycast(ray, out hit, Vector3.Distance(_Entity.transform.position, CurrentDestinationWithoutYPos), mask))
                 {
                     if (_Entity.CurrentLivingTarget != null)
                     {
                         //We handle this slightly different because we want the creature to be close before attacking where as a wall, we want them to be a comfortable distance away.
-                        CurrentDestination = new Vector3(hit.point.x - _Entity.MinDistanceToDestination, hit.point.y, hit.point.z - _Entity.MinDistanceToDestination);
+                        CurrentDestinationWithoutYPos = new Vector3(hit.point.x - _Entity.MinDistanceToDestination, hit.point.y, hit.point.z - _Entity.MinDistanceToDestination);
                     }
                     else
                     {
                         Debug.LogWarning("There is an object in the way! Correcting position so as to not get stuck on a wall or some such!");
-                        CurrentDestination = new Vector3(hit.point.x - _Entity.PositioningCorrectionDistance, hit.point.y, hit.point.z - _Entity.PositioningCorrectionDistance);
+                        CurrentDestinationWithoutYPos = new Vector3(hit.point.x - _Entity.PositioningCorrectionDistance, hit.point.y, hit.point.z - _Entity.PositioningCorrectionDistance);
                     }
                 }
 
                 //Move to destination.
-                _Entity.Controller.SimpleMove(movementFactor * _Entity._CurrentMovementSpeedValue * Time.deltaTime);
+                _Entity.RB.velocity = (movementFactor * _Entity._CurrentMovementSpeedValue) * Time.deltaTime;
             }
         }
 

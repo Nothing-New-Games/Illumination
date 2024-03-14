@@ -5,10 +5,11 @@ using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using System;
+using UnityEngine.UIElements;
 
 namespace Assets.Entities
 {
-    [RequireComponent(typeof(CharacterController))]
+    [RequireComponent(typeof(Rigidbody))]
     public abstract class Alive : MonoBehaviour, ISender
     {
         public static List<Alive> LivingCreatures { get; } = new();
@@ -70,22 +71,34 @@ namespace Assets.Entities
             }
         }
 
-        internal protected virtual float DegreesFromForward(Transform TargetInQuestion) => 
-            Vector3.Angle(transform.position + transform.forward, transform.position + TargetInQuestion.position - transform.forward);
+        internal protected virtual float DegreesFromForward(Transform TargetInQuestion)
+        {
+            Vector3 targetDirection = TargetInQuestion.position - transform.position;
 
+            float angle = Vector3.Angle(targetDirection, transform.forward);
+
+            return angle;
+        }
         internal protected virtual IInteractable NearestInteractable()
         {
+            float degreesFromTarget;
             foreach (var interactable in NearbyInteractables)
             {
-                if (DegreesFromForward(interactable.GetComponent<Transform>()) <= MinTargettingDegrees)
+                degreesFromTarget = DegreesFromForward(interactable.GetComponent<Transform>());
+                TargetAngleDebug = degreesFromTarget * 2;
+
+                if (degreesFromTarget <= MinTargettingDegrees /2)
                     return interactable;
             }
+
+            if (NearbyInteractables.Count == 0)
+                TargetAngleDebug = 0;
 
             return null;
         }
 
         #region Variables
-        protected internal CharacterController Controller;
+        protected internal Rigidbody RB;
 
         protected internal Animator _Animator;
         [ReadOnly, DisplayAsString]
@@ -119,13 +132,6 @@ namespace Assets.Entities
         public float PositioningCorrectionDistance = 3f;
         protected internal float _CurrentMovementSpeedValue = 0f;
 
-        [SerializeField]
-        [TabGroup("Main", "Targetting"), DisplayAsString]
-        protected internal Alive CurrentLivingTarget/* { get; set; }*/;
-
-
-        [SerializeField, TabGroup("Main", "Targetting"), DisplayAsString, LabelText("CurrentInteractTarget")]
-        private string InspectorDisplayForCurrentInteractableTarget = "Null";
         private void UpdateInteractableTargetDisplay()
         {
             if (CurrentInteractTarget == null)
@@ -133,8 +139,6 @@ namespace Assets.Entities
             else
                 InspectorDisplayForCurrentInteractableTarget = CurrentInteractTarget.GetComponent<Transform>().name;
         }
-        [DisplayAsString, TabGroup("Main", "Debug Data"), SerializeField]
-        protected internal bool HasInteractableTarget = false;
 
         protected internal IInteractable CurrentInteractTarget;
 
@@ -165,6 +169,26 @@ namespace Assets.Entities
         private float meshHeight = 0f;
 
 
+        [SerializeField]
+        [TabGroup("Main", "Debug Data"), DisplayAsString]
+        protected internal Alive CurrentLivingTarget/* { get; set; }*/;
+
+        [SerializeField, TabGroup("Main", "Debug Data"), DisplayAsString, LabelText("CurrentInteractTarget")]
+        private string InspectorDisplayForCurrentInteractableTarget = "Null";
+
+
+        [DisplayAsString, TabGroup("Main", "Debug Data"), SerializeField]
+        protected internal bool HasInteractableTarget = false;
+
+
+        [TabGroup("Main", "Debug Data"), DisplayAsString]
+        public Vector3 Velocity;
+        [SerializeField, ShowIf("@IsPlayer == false")]
+        [TabGroup("Main", "Debug Data"), DisplayAsString]
+        protected internal Vector3 _DebugCurrentDestination;
+
+        [TabGroup("Main", "Debug Data"), ReadOnly, Range(0, 360)]
+        public float TargetAngleDebug;
         [TabGroup("Main", "Debug Data"), ShowInInspector, DisplayAsString]
         internal bool IsPlayer =>
             typeof(Player) == this.GetType();
@@ -186,7 +210,8 @@ namespace Assets.Entities
             RaycastHit hit;
             Physics.Raycast(ray, out hit, 0.3f + meshHeight /2);
             if (hit.transform != null)
-                return hit.transform.tag == "Walkable";
+                return LayerMask.LayerToName(hit.transform.gameObject.layer) == "Ground";
+                //return hit.transform.tag == "Walkable";
             else return false;
         }
         protected internal void FindEntityHeight()
@@ -210,21 +235,14 @@ namespace Assets.Entities
 
         public abstract void DealDamage(DamageSource source);
 
-        [TabGroup("Main", "Debug Data"), DisplayAsString]
-        public Vector3 Velocity;
-        private Vector3 LastPosition { get; set; } = Vector3.zero;
-        protected internal void CurrentVelocity()
+        protected internal void UpdateVelocityDebug()
         {
-            if (LastPosition == Vector3.zero) 
-            {
-                LastPosition = transform.position;
-                Velocity = Vector3.zero;
-            }
+            Velocity = RB.velocity;
+        }
 
-            Vector3 currentVelocity =  (transform.position - LastPosition) / Time.deltaTime;
-            LastPosition = transform.position;
-
-            Velocity = currentVelocity;
+        internal bool IsPerformingAnimation(AnimationType animation)
+        {
+            return _Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name.ToLower().Contains(animation.ToString().ToLower());
         }
 
 
@@ -253,7 +271,7 @@ namespace Assets.Entities
         #region Unity Methods
         internal virtual void Awake()
         {
-            Controller = GetComponent<CharacterController>();
+            RB = GetComponent<Rigidbody>();
             _Animator = GetComponent<Animator>();
             _CurrentMovementSpeedValue = BaseMovementSpeed;
             CreateAI();
@@ -282,8 +300,14 @@ namespace Assets.Entities
             Engine.UpdateVariables(this);
             UpdateInteractableTargetDisplay();
             HasInteractableTarget = CurrentInteractTarget != null;
+            UpdateVelocityDebug();
+            _DebugCurrentDestination = Engine.GetCurrentDest;
         }
         internal virtual void LateUpdate()
+        {
+            
+        }
+        internal virtual void FixedUpdate()
         {
             //If the animation is still playing, wait for it to finish.
             if (AnimatorIsPlaying())
@@ -299,15 +323,15 @@ namespace Assets.Entities
             //The AI will handle the movement calculations and return the proper animation.
             CurrentAnimation = AI.Handle(this);
 
-            if (!_Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name.ToLower().Contains(CurrentAnimation.ToString().ToLower()))
+            try
             {
-                //Debug.Log("Good news, everyone!");
-                _Animator.SetTrigger(CurrentAnimation.ToString());
+                if (!_Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name.ToLower().Contains(CurrentAnimation.ToString().ToLower()))
+                {
+                    //Debug.Log("Good news, everyone!");
+                    _Animator.SetTrigger(CurrentAnimation.ToString());
+                }
             }
-        }
-        internal virtual void FixedUpdate()
-        {
-
+            catch { }
         }
         internal virtual void OnDestroy()
         {

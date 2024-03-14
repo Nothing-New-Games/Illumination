@@ -14,6 +14,12 @@ public class Player : Alive
     [DisplayAsString, TabGroup("Main", "Debug Data"), ShowInInspector]
     public static float MouseX;
 
+    [TabGroup("Main", "Movement")]
+    public Vector3 JumpVelocity;
+    [TabGroup("Main", "Movement")]
+    public float FallingMovementReduction;
+
+
     [TabGroup("Main", "Player Settings")]
     public float CameraSensitivity = 0.3f;
     [TabGroup("Main", "Player Settings")]
@@ -26,7 +32,9 @@ public class Player : Alive
     public bool UseTestGFX = false;
     private string UseTestGFXString => $"Use Test GFX ({UseTestGFX})";
 
+    [TabGroup("Main", "Debug")]
     public GameObject[] TrueGFX;
+    [TabGroup("Main", "Debug")]
     public GameObject[] TestGFX;
 
     [Button]
@@ -65,7 +73,7 @@ public class Player : Alive
     internal override void Awake()
     {
         //Get the animator and controller
-        Controller = GetComponent<CharacterController>();
+        RB = GetComponent<Rigidbody>();
         _Animator = GetComponentInChildren<Animator>();
         
         MainCamera = Camera.main;
@@ -93,31 +101,7 @@ public class Player : Alive
         if (InvertCameraY)
             MouseY *= -1;
 
-        if (!IsAlive) return;
-
-        //If the animation is still playing, wait for it to finish.
-        if (AnimatorIsPlaying())
-        {
-            //We don't want to change the animation, but keep the AI going.
-            AI.Handle(this);
-        }
-
-
-        _Animator.ResetTrigger(CurrentAnimation.ToString());
-
-        CurrentAnimation = AI.Handle(this);
-
-        try
-        {
-            if (!_Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name.ToLower().Contains(CurrentAnimation.ToString().ToLower()))
-            {
-                _Animator.SetTrigger(CurrentAnimation.ToString());
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.LogWarning($"We caught an exception, it's probably not an issue, but just to be sure...\n{ex.Message}");
-        }
+        base.FixedUpdate();
     }
 
     internal override void LateUpdate()

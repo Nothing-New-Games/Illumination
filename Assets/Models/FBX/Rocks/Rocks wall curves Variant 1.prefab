@@ -52,10 +52,52 @@ PrefabInstance:
       propertyPath: m_Name
       value: Rocks wall curves Variant 1
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 265b594b08cff284986d1ef32d3be1b5, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1479037425880849569, guid: 265b594b08cff284986d1ef32d3be1b5, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1479037425880849569, guid: 265b594b08cff284986d1ef32d3be1b5, type: 3}
+      propertyPath: m_TagString
+      value: Walkable
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: -5388486865341126887, guid: 265b594b08cff284986d1ef32d3be1b5, type: 3}
     - {fileID: 8821861007005388858, guid: 265b594b08cff284986d1ef32d3be1b5, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1479037425880849569, guid: 265b594b08cff284986d1ef32d3be1b5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2656459882409180800}
   m_SourcePrefab: {fileID: 100100000, guid: 265b594b08cff284986d1ef32d3be1b5, type: 3}
+--- !u!1 &741442032109594659 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1479037425880849569, guid: 265b594b08cff284986d1ef32d3be1b5, type: 3}
+  m_PrefabInstance: {fileID: 2219352307673166978}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &2656459882409180800
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 741442032109594659}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 6652896747559148364, guid: 265b594b08cff284986d1ef32d3be1b5, type: 3}

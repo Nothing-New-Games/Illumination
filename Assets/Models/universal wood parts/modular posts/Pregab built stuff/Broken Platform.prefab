@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6747985134357173774}
   - component: {fileID: 7164379673256373942}
   - component: {fileID: 8708957647298950649}
+  - component: {fileID: 6276683196263908961}
   m_Layer: 0
   m_Name: WoodensqurePost3
   m_TagString: Untagged
@@ -83,6 +84,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &6276683196263908961
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 185390518452625395}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -1015444721255320518, guid: 8a796e57c8fd3e34fad99316fb05978c, type: 3}
 --- !u!1 &486549598734978792
 GameObject:
   m_ObjectHideFlags: 0
@@ -135,6 +158,7 @@ GameObject:
   - component: {fileID: 4048184834296009905}
   - component: {fileID: 6140213328768709406}
   - component: {fileID: 3147417951315983400}
+  - component: {fileID: 888382942057946}
   m_Layer: 0
   m_Name: WoodenPlank1
   m_TagString: Untagged
@@ -207,6 +231,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &888382942057946
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1364745970817508332}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -1963754306419273535, guid: 8a796e57c8fd3e34fad99316fb05978c, type: 3}
 --- !u!1 &2940119352417368134
 GameObject:
   m_ObjectHideFlags: 0
@@ -218,6 +264,7 @@ GameObject:
   - component: {fileID: 4844446029059855986}
   - component: {fileID: 231272287228970657}
   - component: {fileID: 4416744415219145498}
+  - component: {fileID: 1013835192927338262}
   m_Layer: 0
   m_Name: WoodenPlank4 (1)
   m_TagString: Untagged
@@ -290,6 +337,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &1013835192927338262
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2940119352417368134}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 3740687671621841432, guid: 8a796e57c8fd3e34fad99316fb05978c, type: 3}
 --- !u!1 &4875776979488649457
 GameObject:
   m_ObjectHideFlags: 0
@@ -301,6 +370,7 @@ GameObject:
   - component: {fileID: 5493183236353123220}
   - component: {fileID: 13923601226814127}
   - component: {fileID: 511384990214393388}
+  - component: {fileID: 2881038549672844077}
   m_Layer: 0
   m_Name: WoodensqurePost1
   m_TagString: Untagged
@@ -373,6 +443,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &2881038549672844077
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4875776979488649457}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -2042558226999711012, guid: 8a796e57c8fd3e34fad99316fb05978c, type: 3}
 --- !u!1 &5232485772743326053
 GameObject:
   m_ObjectHideFlags: 0
@@ -384,6 +476,7 @@ GameObject:
   - component: {fileID: 4391462781849562564}
   - component: {fileID: 7445171808420777644}
   - component: {fileID: 2533906651724171810}
+  - component: {fileID: 9217958706659077604}
   m_Layer: 0
   m_Name: WoodensqurePost3 (1)
   m_TagString: Untagged
@@ -456,6 +549,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &9217958706659077604
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5232485772743326053}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -1015444721255320518, guid: 8a796e57c8fd3e34fad99316fb05978c, type: 3}
 --- !u!1 &5776160156262216261
 GameObject:
   m_ObjectHideFlags: 0
@@ -467,6 +582,7 @@ GameObject:
   - component: {fileID: 6693357377215090823}
   - component: {fileID: 2058901884707513157}
   - component: {fileID: 4715083808692066222}
+  - component: {fileID: 4388074471222255132}
   m_Layer: 0
   m_Name: WoodenPlank2
   m_TagString: Untagged
@@ -539,6 +655,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &4388074471222255132
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5776160156262216261}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 1394950185152537373, guid: 8a796e57c8fd3e34fad99316fb05978c, type: 3}
 --- !u!1 &6454257681376840992
 GameObject:
   m_ObjectHideFlags: 0
@@ -550,6 +688,7 @@ GameObject:
   - component: {fileID: 6825443432758958544}
   - component: {fileID: 5415214640293969722}
   - component: {fileID: 7399817241582291251}
+  - component: {fileID: 1192402994314085050}
   m_Layer: 0
   m_Name: WoodenPlank3
   m_TagString: Untagged
@@ -622,6 +761,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &1192402994314085050
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6454257681376840992}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 456673152112684895, guid: 8a796e57c8fd3e34fad99316fb05978c, type: 3}
 --- !u!1 &7283848793987933349
 GameObject:
   m_ObjectHideFlags: 0
@@ -633,6 +794,7 @@ GameObject:
   - component: {fileID: 6546011177107503230}
   - component: {fileID: 1092604894194191922}
   - component: {fileID: 7595247506420135388}
+  - component: {fileID: 4166440631541861365}
   m_Layer: 0
   m_Name: WoodenPlank4
   m_TagString: Untagged
@@ -705,6 +867,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &4166440631541861365
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7283848793987933349}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 3740687671621841432, guid: 8a796e57c8fd3e34fad99316fb05978c, type: 3}
 --- !u!1 &8487544412519184280
 GameObject:
   m_ObjectHideFlags: 0
@@ -716,6 +900,7 @@ GameObject:
   - component: {fileID: 3091759845313284252}
   - component: {fileID: 2478679009651357228}
   - component: {fileID: 486626089020682903}
+  - component: {fileID: 3395400894169699370}
   m_Layer: 0
   m_Name: WoodenPlank4 (2)
   m_TagString: Untagged
@@ -788,6 +973,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &3395400894169699370
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8487544412519184280}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 3740687671621841432, guid: 8a796e57c8fd3e34fad99316fb05978c, type: 3}
 --- !u!1 &9036410969884869111
 GameObject:
   m_ObjectHideFlags: 0
@@ -799,6 +1006,7 @@ GameObject:
   - component: {fileID: 6227641357835772239}
   - component: {fileID: 8302292662162372965}
   - component: {fileID: 1471704047848301616}
+  - component: {fileID: 3578913679905750812}
   m_Layer: 0
   m_Name: WoodensqurePost2
   m_TagString: Untagged
@@ -871,3 +1079,25 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &3578913679905750812
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9036410969884869111}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 6758981027542003365, guid: 8a796e57c8fd3e34fad99316fb05978c, type: 3}

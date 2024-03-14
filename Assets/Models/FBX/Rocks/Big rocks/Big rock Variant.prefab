@@ -48,9 +48,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -5388486865341126887, guid: c2f30b081f727ed43ab0295b5b269503, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: c2f30b081f727ed43ab0295b5b269503, type: 3}
       propertyPath: m_Name
       value: Big rock Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c2f30b081f727ed43ab0295b5b269503, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -79,5 +87,35 @@ PrefabInstance:
     - {fileID: 1479037425880849569, guid: c2f30b081f727ed43ab0295b5b269503, type: 3}
     - {fileID: 3508337815781494109, guid: c2f30b081f727ed43ab0295b5b269503, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: -5388486865341126887, guid: c2f30b081f727ed43ab0295b5b269503, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6839679712487810925}
   m_SourcePrefab: {fileID: 100100000, guid: c2f30b081f727ed43ab0295b5b269503, type: 3}
+--- !u!1 &7224849000344351397 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -5388486865341126887, guid: c2f30b081f727ed43ab0295b5b269503, type: 3}
+  m_PrefabInstance: {fileID: 5871548626150856124}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &6839679712487810925
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7224849000344351397}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 1883351391177901584, guid: c2f30b081f727ed43ab0295b5b269503, type: 3}

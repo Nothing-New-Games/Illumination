@@ -48,9 +48,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7469785824698535700, guid: f7f8fc907862ac84f994c656376594c4, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f7f8fc907862ac84f994c656376594c4, type: 3}
       propertyPath: m_Name
       value: Cluster Variant 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f7f8fc907862ac84f994c656376594c4, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -65,7 +73,37 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f7f8fc907862ac84f994c656376594c4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1134819990944925572}
+    - targetCorrespondingSourceObject: {fileID: -7469785824698535700, guid: f7f8fc907862ac84f994c656376594c4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1390591003387188055}
   m_SourcePrefab: {fileID: 100100000, guid: f7f8fc907862ac84f994c656376594c4, type: 3}
+--- !u!1 &5424863909598352095 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -7469785824698535700, guid: f7f8fc907862ac84f994c656376594c4, type: 3}
+  m_PrefabInstance: {fileID: 5988944890689102387}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &1390591003387188055
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5424863909598352095}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -1092228300673169548, guid: f7f8fc907862ac84f994c656376594c4, type: 3}
 --- !u!1 &6907510777262317410 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: f7f8fc907862ac84f994c656376594c4, type: 3}

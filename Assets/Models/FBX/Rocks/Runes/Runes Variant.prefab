@@ -52,6 +52,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Runes Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c2f30b081f727ed43ab0295b5b269503, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3228480938859063584, guid: c2f30b081f727ed43ab0295b5b269503, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 4933710840903080702, guid: c2f30b081f727ed43ab0295b5b269503, type: 3}
@@ -79,5 +87,35 @@ PrefabInstance:
     - {fileID: 7492739323325127038, guid: c2f30b081f727ed43ab0295b5b269503, type: 3}
     - {fileID: -405735998088465380, guid: c2f30b081f727ed43ab0295b5b269503, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3228480938859063584, guid: c2f30b081f727ed43ab0295b5b269503, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8900194052149968684}
   m_SourcePrefab: {fileID: 100100000, guid: c2f30b081f727ed43ab0295b5b269503, type: 3}
+--- !u!1 &2983087649101479931 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3228480938859063584, guid: c2f30b081f727ed43ab0295b5b269503, type: 3}
+  m_PrefabInstance: {fileID: 408649054686025435}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &8900194052149968684
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2983087649101479931}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 6104879658923449514, guid: c2f30b081f727ed43ab0295b5b269503, type: 3}
