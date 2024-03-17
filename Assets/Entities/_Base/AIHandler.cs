@@ -1,6 +1,7 @@
 using Sirenix.Serialization;
 using UnityEditorInternal;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 namespace Assets.Entities.AI
 {
@@ -10,7 +11,7 @@ namespace Assets.Entities.AI
         /// <summary>
         /// This enum souly exists to say "Let us finish the current animation!"
         /// </summary>
-        PreventMovement, 
+        PreventMovement,
         Idle, Walk, Run, Attack, Push, Jumping, Falling, Dead, CrouchIdle, CrouchWalk, CrouchRun, Touch, Touchdown, Loot
     }
     #endregion
@@ -37,7 +38,8 @@ namespace Assets.Entities.AI
 
             //Determine if the player is detected
             //If the player is detected, clear the idle timer and assign the player as a target.
-            SearchForTarget(entity);
+            if (SearchForTarget(entity, entity.ClosestLiving()))
+                entity.CurrentLivingTarget = Player.PlayerInstance.GetComponent<Player>();
 
             #region Idle Animation
             //Idle = Current location
@@ -72,7 +74,7 @@ namespace Assets.Entities.AI
             #region Attack and Attack Animation
             //Check if we are close enough to the target to attack
             if (entity.CurrentLivingTarget != null)
-                if (Vector3.Distance(entity.CurrentLivingTarget.transform.position, entity.transform.position) <= entity.MinDistanceToTarget)
+                if (Vector3.Distance(entity.CurrentLivingTarget.transform.position, entity.transform.position) <= entity.MaxAttackOrInteractDistance)
                 {
                     //Handle attacking the target.
                     //Call method from Entity.Attack?
@@ -98,7 +100,7 @@ namespace Assets.Entities.AI
                 (
                     Random.Range(-entity.MaxWanderDistXY.x, entity.MaxWanderDistXY.x),
                     0,
-                    Random.Range(-entity.MaxWanderDistXY.y, entity.MaxWanderDistXY.y)                 
+                    Random.Range(-entity.MaxWanderDistXY.y, entity.MaxWanderDistXY.y)
                 ) + entity.transform.position;
 
             return NewDestination;
@@ -108,40 +110,50 @@ namespace Assets.Entities.AI
         /// Searches for the player and returns true if they have been detected.
         /// </summary>
         /// <param name="thisEntity">The entity searching for the player.</param>
-        protected internal virtual bool SearchForTarget(Alive thisEntity)
+        protected internal virtual bool SearchForTarget(Alive thisEntity, Alive DesiredTarget = null)
         {
-            //Define the chance of detecting the player. We will take away from this value the less likely the entity is to detect them.
-            float DetectionChance = thisEntity.BaseDetectionChance;
-            float FailureChance = 0f;
+            if (DesiredTarget == null)
+                DesiredTarget = Player.PlayerInstance.GetComponent<Alive>();
 
-            //Start by getting the distance to the player.
-            float DistanceToPlayer = Vector3.Distance(thisEntity.transform.position, Player.PlayerInstance.position);
-            float AngleToPlayer = Vector3.Angle(thisEntity.transform.forward, thisEntity.transform.position - Player.PlayerInstance.position);
+            #region
+            float sightDetectionChance;
+            float hearingDetectionChance;
+            float totalDetectionChance;
+            #endregion
 
-            if (DistanceToPlayer < thisEntity.MaxDetectionDistance)
-                FailureChance = DetectionChance;
-            if (AngleToPlayer > thisEntity.MaxAngleDetection)
-                FailureChance += 30f;
+            float velocityFactor =
+                Mathf.Clamp01(1f - (DesiredTarget.Velocity.magnitude / thisEntity.MaxSpeedDetection));
+            float sightFactor =
+                Mathf.Clamp01(1f -
+                    (Vector3.Distance(thisEntity.transform.position, DesiredTarget.transform.position) / thisEntity.MaxSightDistanceToTarget));
+            float hearingFactor
+                = Mathf.Clamp01(1f -
+                    (Vector3.Distance(thisEntity.transform.position, DesiredTarget.transform.position) / thisEntity.MaxHearingDistanceToTarget));
+            float angleFactor
+                = Mathf.Clamp01(1f -
+                    Mathf.Abs(Vector3.Angle(thisEntity.transform.forward, DesiredTarget.transform.position)) / (thisEntity.MaxAngleDetection / 2f));
 
-            DetectionChance -= FailureChance;
+            sightDetectionChance = thisEntity.SightWeight * sightFactor;
 
-            if (DetectionChance <= 0f)
-                return false;
+            if (hearingFactor > 0)
+                hearingFactor = Mathf.Clamp01(hearingFactor + velocityFactor);
+            hearingDetectionChance = thisEntity.HearingWeight * hearingFactor;
+            totalDetectionChance = thisEntity.BaseDetectionChance * sightDetectionChance + hearingDetectionChance;
 
-            float DetectionAttempt = Random.Range(0, DetectionChance);
-            bool PlayerDetected = DetectionChance / thisEntity.BaseDetectionChance >= DetectionAttempt;
-
-            //Debug.Log($"The current Manhattan distance from the player to {thisEntity.name} is {DistanceToPlayer} at an angle of {AngleToPlayer}.\nWas the player found with a chance of {DetectionChance}? {PlayerDetected}");
-
-            return PlayerDetected;
+            return Random.Range(0f, 100f) <= totalDetectionChance * angleFactor;
         }
 
-        protected internal virtual IInteractable NearestInteractable()
+        //Method here for determining if we're stuck?
+        protected internal virtual void GetUnstuck(Alive entity)
         {
-
-
-
-            return null;
+            //Debug.LogError("No logic written for getting unstuck!");
+            entity.PauseMovement = true;
+            entity.transform.rotation *= Quaternion.Euler(0f, 22.5f, 0);
+            entity.Engine.CurrentDestination =
+                entity.transform.forward * (Vector3.Distance(entity.transform.position, entity.Engine.CurrentPosition) * 2)
+                +
+                (entity.transform.position);
+            entity.PauseMovement = false;
         }
     }
 }

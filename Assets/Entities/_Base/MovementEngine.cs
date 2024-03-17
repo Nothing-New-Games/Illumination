@@ -66,15 +66,18 @@ namespace Assets.Entities.AI
 
                 if (Physics.Raycast(ray, out hit, Vector3.Distance(_Entity.transform.position, CurrentDestinationWithoutYPos), mask))
                 {
-                    if (_Entity.CurrentLivingTarget != null)
+                    if (!hit.transform.name.ToLower().Equals("terrain"))
                     {
-                        //We handle this slightly different because we want the creature to be close before attacking where as a wall, we want them to be a comfortable distance away.
-                        CurrentDestinationWithoutYPos = new Vector3(hit.point.x - _Entity.MinDistanceToDestination, hit.point.y, hit.point.z - _Entity.MinDistanceToDestination);
-                    }
-                    else
-                    {
-                        Debug.LogWarning("There is an object in the way! Correcting position so as to not get stuck on a wall or some such!");
-                        CurrentDestinationWithoutYPos = new Vector3(hit.point.x - _Entity.PositioningCorrectionDistance, hit.point.y, hit.point.z - _Entity.PositioningCorrectionDistance);
+                        if (_Entity.CurrentLivingTarget != null)
+                        {
+                            //We handle this slightly different because we want the creature to be close before attacking where as a wall, we want them to be a comfortable distance away.
+                            CurrentDestinationWithoutYPos = new Vector3(hit.point.x - _Entity.MinDistanceToDestination, hit.point.y, hit.point.z - _Entity.MinDistanceToDestination);
+                        }
+                        else if (_Entity.PrintStuckCorrectionLogs)
+                        {
+                            Debug.LogWarning($"{hit.transform.name} is in the way! Correcting position so as to not get stuck on a wall or some such!");
+                            CurrentDestinationWithoutYPos = new Vector3(hit.point.x - _Entity.PositioningCorrectionDistance, hit.point.y, hit.point.z - _Entity.PositioningCorrectionDistance);
+                        }
                     }
                 }
 

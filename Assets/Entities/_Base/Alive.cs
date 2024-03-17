@@ -6,103 +6,17 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using System;
 using UnityEngine.UIElements;
+using System.Linq;
 
 namespace Assets.Entities
 {
     [RequireComponent(typeof(Rigidbody))]
     public abstract class Alive : MonoBehaviour, ISender
     {
-        public static List<Alive> LivingCreatures { get; } = new();
-        [ShowInInspector, DisplayAsString, TabGroup("Main", "Debug Data")]
-        protected internal List<Alive> NearbyCreatures { get; } = new();
-
-        [ShowInInspector, DisplayAsString, TabGroup("Main", "Debug Data")]
-        protected internal List<IInteractable> NearbyInteractables { get; } = new();
-
-        protected internal virtual void UpdateNearbyCreaturesList()
-        {
-            NearbyCreatures.Clear();
-
-            foreach (var creature in LivingCreatures)
-            {
-                if (creature == this) continue;
-
-                if (Vector3.Distance(transform.position, creature.transform.position) <= MinDistanceToTarget)
-                {
-                    NearbyCreatures.Add(creature);
-                }
-            }
-        }
-
-        [Button]
-        protected internal void RegisterAlive()
-        {
-            if (!LivingCreatures.Contains(this))
-                LivingCreatures.Add(this);
-            else Debug.LogWarning($"{name} is already registered as a living creature!");
-        }
-
-        protected internal virtual void UpdateNearbyInteractablesList()
-        {
-            NearbyInteractables.Clear();
-
-            foreach (var interactable in IInteractable.Interactables)
-            {
-                Transform interactableTransform = null;
-                try
-                {
-                    interactableTransform = interactable.GetComponent<Transform>();
-                }
-                catch(Exception ex)
-                {
-                    Debug.LogError($"Error when trying to get transform for {interactable}!\n{ex.Message}");
-                }
-                if (interactableTransform == null)
-                {
-                    Debug.LogWarning($"Warning! Could not find transform for {interactable}!\n" +
-                        $"Skipping call!");
-                    continue;
-                }
-
-                if (Vector3.Distance(transform.position, interactableTransform.position) <= MinDistanceToTarget)
-                {
-                    NearbyInteractables.Add(interactable);
-                }
-            }
-        }
-
-        internal protected virtual float DegreesFromForward(Transform TargetInQuestion)
-        {
-            Vector3 targetDirection = TargetInQuestion.position - transform.position;
-
-            float angle = Vector3.Angle(targetDirection, transform.forward);
-
-            return angle;
-        }
-        internal protected virtual IInteractable NearestInteractable()
-        {
-            float degreesFromTarget;
-            foreach (var interactable in NearbyInteractables)
-            {
-                degreesFromTarget = DegreesFromForward(interactable.GetComponent<Transform>());
-                TargetAngleDebug = degreesFromTarget * 2;
-
-                if (degreesFromTarget <= MinTargettingDegrees /2)
-                    return interactable;
-            }
-
-            if (NearbyInteractables.Count == 0)
-                TargetAngleDebug = 0;
-
-            return null;
-        }
-
         #region Variables
         protected internal Rigidbody RB;
 
         protected internal Animator _Animator;
-        [ReadOnly, DisplayAsString]
-        public AnimationType CurrentAnimation;
         /// <summary>
         /// If you are replacing the engine with a custom one, override the start method.
         /// </summary>
@@ -111,90 +25,164 @@ namespace Assets.Entities
         /// If you are replacing the AI with a custom one, override the start method.
         /// </summary>
         protected internal AIHandler AI;
+
+        private float meshHeight = 0f;
+        public static List<Alive> LivingCreatures { get; } = new();
+        public static void RegisterCreature(Alive creature)
+        {
+            if (LivingCreatures.Contains(creature))
+                Debug.LogWarning($"Attempted to register {creature.name} while it is already in the list!");
+            else LivingCreatures.Add(creature);
+        }
+        public static void Deregister(Alive creature)
+        {
+            if (LivingCreatures.Contains(creature))
+                LivingCreatures.Remove(creature);
+            else Debug.LogWarning($"Attempted to remove {creature.name} from the list of living creatures, but it does not exist!");
+        }
+        #endregion
+
+        #region Inspector
+        [ReadOnly, DisplayAsString]
+        public AnimationType CurrentAnimation;
         [SerializeField]
         protected internal bool IsAlive = true;
 
-        [TabGroup("Main", "Movement")]
+        [TabGroup("Main", "Stats"), Button]
+        protected internal void RegisterAlive()
+        {
+            RegisterCreature(this);
+        }
+        [TabGroup("Main", "Stats"), Button]
+        protected internal void DeRegisterAlive()
+        {
+            Deregister(this);
+        }
+
+        [TabGroup("Main/Stats/StatsSubTabs", "Movement")]
         public bool PauseMovement;
-        [TabGroup("Main", "Movement")]
+        [TabGroup("Main/Stats/StatsSubTabs", "Movement")]
+        public bool RunStuckChecks = true;
+        [TabGroup("Main/Stats/StatsSubTabs", "Movement")]
         public float BaseMovementSpeed = 5f;
-        [TabGroup("Main", "Movement")]
+        [TabGroup("Main/Stats/StatsSubTabs", "Movement")]
         public float RunMovementMultiplier = 2f;
-        [TabGroup("Main", "Movement"), ShowIf("@IsPlayer == false")]
+        [TabGroup("Main/Stats/StatsSubTabs", "Movement"), ShowIf("@IsPlayer == false")]
         public float MinDistanceToDestination = 1f;
-        [TabGroup("Main", "Movement"), ShowIf("@IsPlayer == false")]
+        [TabGroup("Main/Stats/StatsSubTabs", "Movement"), ShowIf("@IsPlayer == false")]
         public Vector2 MaxWanderDistXY;
-        [TabGroup("Main", "Movement"), ShowIf("@IsPlayer == false")]
+        [TabGroup("Main/Stats/StatsSubTabs", "Movement"), ShowIf("@IsPlayer == false")]
         public float MinIdleDuration = 3f;
-        [TabGroup("Main", "Movement"), ShowIf("@IsPlayer == false")]
+        [TabGroup("Main/Stats/StatsSubTabs", "Movement"), ShowIf("@IsPlayer == false")]
         public float MaxIdleDuration = 15f;
-        [TabGroup("Main", "Movement"), ShowIf("@IsPlayer == false")]
+        [TabGroup("Main/Stats/StatsSubTabs", "Movement"), ShowIf("@IsPlayer == false")]
         public float PositioningCorrectionDistance = 3f;
         protected internal float _CurrentMovementSpeedValue = 0f;
 
-        private void UpdateInteractableTargetDisplay()
+
+        [TabGroup("Main/Stats/StatsSubTabs", "Movement"), ShowIf("@IsPlayer == false")]
+        public float StuckCheckInterval = 3f;
+
+        #region
+        private float LastMeasuredHearingWeight;
+        private float LastMeasuredSightWeight;
+        private void WeightAdjusted()
         {
-            if (CurrentInteractTarget == null)
-                InspectorDisplayForCurrentInteractableTarget = "Null";
-            else
-                InspectorDisplayForCurrentInteractableTarget = CurrentInteractTarget.GetComponent<Transform>().name;
+            if (LastMeasuredHearingWeight != HearingWeight)
+                SightWeight = 100 - HearingWeight;
+            else if (LastMeasuredSightWeight != SightWeight)
+                HearingWeight = 100 - SightWeight;
+
+            LastMeasuredHearingWeight = HearingWeight;
+            LastMeasuredSightWeight = SightWeight;
         }
+        #endregion
 
-        protected internal IInteractable CurrentInteractTarget;
-
-        [TabGroup("Main", "Targetting")]
-        public float MinDistanceToTarget = 3f;
-        [TabGroup("Main", "Targetting"), Range(1, 360), SerializeField]
-        [Tooltip("The creature's ability to see things around them. 180 = complete 360 vision (Don't ask, that's how Unity works), 0 = Blind.")]
+        [TabGroup("Main/Stats/StatsSubTabs", "Targeting"), SerializeField, ShowIf("@IsPlayer == false")]
+        [Tooltip("The distance the creature has to be in order to interact with or attack things.")]
+        protected internal float MaxAttackOrInteractDistance = 30f;
+        [TabGroup("Main/Stats/StatsSubTabs", "Targeting"), SerializeField, ShowIf("@IsPlayer == false && IsBlind == false")]
+        public float MaxSightDistanceToTarget = 3f;
+        [TabGroup("Main/Stats/StatsSubTabs", "Targeting"), SerializeField, ShowIf("@IsPlayer == false && IsDeaf == false")]
+        public float MaxHearingDistanceToTarget = 3f;
+        [OnValueChanged("WeightAdjusted"), Range(0, 100), ShowIf("@IsBlind == false && IsPlayer == false"), TabGroup("Main/Stats/StatsSubTabs", "Targeting")]
+        public float SightWeight = 50f;
+        [OnValueChanged("WeightAdjusted"), Range(0, 100), ShowIf("@IsDeaf == false && IsPlayer == false"), TabGroup("Main/Stats/StatsSubTabs", "Targeting")]
+        public float HearingWeight = 50f;
+        [TabGroup("Main/Stats/StatsSubTabs", "Targeting"), Range(1, 360), SerializeField]
+        [Tooltip("The creature's ability to see things around them."), ShowIf("@IsPlayer == false")]
         protected internal float MaxAngleDetection = 20;
-        [TabGroup("Main", "Targetting"), Range(1, 360)]
-        public float MinTargettingDegrees = 40f;
-        [TabGroup("Main", "Targetting"), SerializeField, ShowIf("@IsPlayer == false")]
-        [Tooltip("The creature's ability to see things in front of them.")]
-        protected internal float MaxDetectionDistance = 30f;
-        [TabGroup("Main", "Targetting"), SerializeField, ShowIf("@IsPlayer == false")]
+        [TabGroup("Main/Stats/StatsSubTabs", "Targeting"), Range(1, 360)]
+        public float MaxTargetingDegrees = 40f;
+        [TabGroup("Main/Stats/StatsSubTabs", "Targeting"), ShowIf("@IsDeaf == true && IsPlayer == false")]
+        public float MaxSpeedDetection = 10f;
+        [TabGroup("Main/Stats/StatsSubTabs", "Targeting"), SerializeField, ShowIf("@IsPlayer == false"), Range(0, 100)]
         [Tooltip("The creatures base chance to detect the player. The higher it is, the more likely it is.")]
         protected internal float BaseDetectionChance = 100f;
 
         [SerializeField]
-        [TabGroup("Main", "Stats"), Tooltip("The current health of the entity.")]
+        [TabGroup("Main/Stats/StatsSubTabs", "Health"), Tooltip("The current health of the entity.")]
         protected internal float CurrentHealth = 1f;
         [SerializeField]
-        [TabGroup("Main", "Stats"), Tooltip("The max health the entity will have.")]
+        [TabGroup("Main/Stats/StatsSubTabs", "Health"), Tooltip("The max health the entity will have.")]
         protected internal float MaxHealth = 1f;
         [SerializeField]
-        [TabGroup("Main", "Stats"), Tooltip("Min/Max damage the entity can do with an attack.")]
+        [TabGroup("Main/Stats/StatsSubTabs", "Health"), Tooltip("Min/Max damage the entity can do with an attack.")]
         protected internal Vector2 Damage = new Vector2(1, 1);
 
-        private float meshHeight = 0f;
 
-
-        [SerializeField]
-        [TabGroup("Main", "Debug Data"), DisplayAsString]
-        protected internal Alive CurrentLivingTarget/* { get; set; }*/;
-
-        [SerializeField, TabGroup("Main", "Debug Data"), DisplayAsString, LabelText("CurrentInteractTarget")]
-        private string InspectorDisplayForCurrentInteractableTarget = "Null";
-
-
-        [DisplayAsString, TabGroup("Main", "Debug Data"), SerializeField]
-        protected internal bool HasInteractableTarget = false;
-
-
-        [TabGroup("Main", "Debug Data"), DisplayAsString]
-        public Vector3 Velocity;
-        [SerializeField, ShowIf("@IsPlayer == false")]
-        [TabGroup("Main", "Debug Data"), DisplayAsString]
-        protected internal Vector3 _DebugCurrentDestination;
-
-        [TabGroup("Main", "Debug Data"), ReadOnly, Range(0, 360)]
-        public float TargetAngleDebug;
-        [TabGroup("Main", "Debug Data"), ShowInInspector, DisplayAsString]
-        internal bool IsPlayer =>
-            typeof(Player) == this.GetType();
-
+        [TabGroup("Main/Stats/StatsSubTabs", "Targeting"), OnValueChanged("IsBlindToggle"), SerializeField]
+        protected internal bool IsBlind = false;
+        #region
+        [TabGroup("Main/Stats/StatsSubTabs", "Targeting"), ReadOnly, DisplayAsString, HideLabel, ShowInInspector]
+        public const string dumb = "and";
+        #endregion
+        [TabGroup("Main/Stats/StatsSubTabs", "Targeting"), OnValueChanged("IsDeafToggle"), SerializeField]
+        protected internal bool IsDeaf = false;
+        #region
+        [TabGroup("Main/Stats/StatsSubTabs", "Targeting"), ReadOnly, DisplayAsString, HideLabel, ShowInInspector]
+        public const string moreDumb = "and born to follow";
+        #endregion
         #endregion
 
+        #region Methods
+        private float _PreviousHearingDistance;
+        private float _PreviousSightDistance;
+        private void IsDeafToggle()
+        {
+            if (IsDeaf)
+            {
+                _PreviousHearingDistance = MaxHearingDistanceToTarget;
+                MaxHearingDistanceToTarget = 0f;
+            }
+            else
+                MaxHearingDistanceToTarget = _PreviousHearingDistance;
+        }
+        public Alive ClosestLiving()
+        {
+            Alive closest = null;
+            float lastRecordedDistance = 0f;
+            foreach (var creature in Alive.LivingCreatures)
+            {
+                if (Vector3.Distance(transform.position, creature.transform.position) < lastRecordedDistance)
+                {
+                    lastRecordedDistance = Vector3.Distance(transform.position, closest.transform.position);
+                    closest = creature;
+                }
+            }
+
+            return closest;
+        }
+        private void IsBlindToggle()
+        {
+            if (IsBlind)
+            {
+                _PreviousSightDistance = MaxSightDistanceToTarget;
+                MaxSightDistanceToTarget = 0f;
+            }
+            else
+                MaxSightDistanceToTarget = _PreviousSightDistance;
+        }
 
         protected internal bool AnimatorIsPlaying()
         {
@@ -244,7 +232,123 @@ namespace Assets.Entities
         {
             return _Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name.ToLower().Contains(animation.ToString().ToLower());
         }
+        internal virtual void CreateAI() => AI = new();
 
+        internal virtual void CreateEngine() => Engine = new();
+
+        Vector3 _PreviousPositionForStuckCheck;
+        LayerMask _ObstacleLayer;
+        internal virtual bool CheckIfStuck()
+        {
+            if (IsPerformingAnimation(AnimationType.Idle))
+                return false;
+
+            Vector3 currentPosition = RB.position;
+            float distanceMoved = Vector3.Distance(_PreviousPositionForStuckCheck, currentPosition);
+
+            if (distanceMoved < 0.1f) // Adjust threshold as needed
+            {
+                AI.GetUnstuck(this);
+                Debug.LogWarning("NPC is stuck due to lack of movement!");
+                return true;
+            }
+            RaycastHit hit;
+
+            if (Physics.Raycast(transform.position, transform.forward, out hit, PositioningCorrectionDistance, _ObstacleLayer))
+            {
+                if (PrintStuckCorrectionLogs)
+                    Debug.LogWarning($"NPC is stuck due to continuous collision with {hit.transform.name}!");
+                AI.GetUnstuck(this);
+            }
+
+            _PreviousPositionForStuckCheck = currentPosition;
+            return false;
+        }
+
+        private void UpdateInteractableTargetDisplay()
+        {
+            if (CurrentInteractTarget == null)
+                InspectorDisplayForCurrentInteractableTarget = "Null";
+            else
+                InspectorDisplayForCurrentInteractableTarget = CurrentInteractTarget.GetComponent<Transform>().name;
+        }
+
+        protected internal IInteractable CurrentInteractTarget;
+
+
+        protected internal virtual void UpdateNearbyCreaturesList()
+        {
+            NearbyCreatures.Clear();
+
+            foreach (var creature in LivingCreatures)
+            {
+                if (creature == this) continue;
+
+                if (MaxSightDistanceToTarget > MaxHearingDistanceToTarget)
+                {
+                    if (Vector3.Distance(transform.position, creature.transform.position) <= MaxSightDistanceToTarget)
+                        NearbyCreatures.Add(creature);
+                }
+                else if (MaxHearingDistanceToTarget > MaxSightDistanceToTarget)
+                {
+                    if (Vector3.Distance(transform.position, creature.transform.position) <= MaxHearingDistanceToTarget)
+                        NearbyCreatures.Add(creature);
+                }
+                else if (DrawNearbyCreaturesGizmo) Debug.Log($"{name} IS DEAF AND BLIND AND DUMB AND BORN TO FOLLOW!");
+            }
+        }
+
+        protected internal virtual void UpdateNearbyInteractablesList()
+        {
+            NearbyInteractables.Clear();
+
+            foreach (var interactable in IInteractable.Interactables)
+            {
+                Transform interactableTransform = null;
+                try
+                {
+                    interactableTransform = interactable.GetComponent<Transform>();
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Error when trying to get transform for {interactable}!\n{ex.Message}");
+                }
+                if (interactableTransform == null)
+                {
+                    Debug.LogWarning($"Warning! Could not find transform for {interactable}!\n" +
+                        $"Skipping call!");
+                    continue;
+                }
+
+                if (Vector3.Distance(transform.position, interactableTransform.position) <= MaxSightDistanceToTarget)
+                {
+                    NearbyInteractables.Add(interactable);
+                }
+            }
+        }
+
+        internal protected virtual float DegreesFromForward(Transform TargetInQuestion)
+        {
+            Vector3 targetDirection = TargetInQuestion.position - transform.position;
+
+            float angle = Vector3.Angle(targetDirection, transform.forward);
+
+            return angle;
+        }
+        internal protected virtual IInteractable NearestInteractable()
+        {
+            float degreesFromTarget;
+            foreach (var interactable in NearbyInteractables)
+            {
+                degreesFromTarget = DegreesFromForward(interactable.GetComponent<Transform>());
+
+                if (degreesFromTarget <= MaxTargetingDegrees / 2)
+                    return interactable;
+            }
+
+            return null;
+        }
+        #endregion
 
         #region Death Event
         public event ISender.EventConditionsMetHandler OnEventConditionsMet;
@@ -273,22 +377,17 @@ namespace Assets.Entities
         {
             RB = GetComponent<Rigidbody>();
             _Animator = GetComponent<Animator>();
+            RegisterCreature(this);
             _CurrentMovementSpeedValue = BaseMovementSpeed;
             CreateAI();
             CreateEngine();
             Engine.UpdateVariables(this, transform.position);
             FindEntityHeight();
-            LivingCreatures.Add(this);
+            _ObstacleLayer = ~LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer));
         }
-
-        internal virtual void CreateAI() => AI = new();
-
-        internal virtual void CreateEngine() => Engine = new();
-
         internal virtual void Start()
         {
-            if (!LivingCreatures.Contains(this))
-                LivingCreatures.Add(this);
+
         }
         internal virtual void Update()
         {
@@ -302,6 +401,13 @@ namespace Assets.Entities
             HasInteractableTarget = CurrentInteractTarget != null;
             UpdateVelocityDebug();
             _DebugCurrentDestination = Engine.GetCurrentDest;
+
+            if (CurrentLivingTarget)
+                TargetAngleDebug = DegreesFromForward(CurrentLivingTarget.GetComponent<Transform>()) * 2;
+            else if (CurrentInteractTarget != null)
+                TargetAngleDebug = DegreesFromForward(CurrentInteractTarget.GetComponent<Transform>()) * 2;
+            else TargetAngleDebug = 0;
+
         }
         internal virtual void LateUpdate()
         {
@@ -325,75 +431,131 @@ namespace Assets.Entities
 
             try
             {
-                if (!_Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name.ToLower().Contains(CurrentAnimation.ToString().ToLower()))
+                if (!IsPerformingAnimation(CurrentAnimation))
                 {
                     //Debug.Log("Good news, everyone!");
                     _Animator.SetTrigger(CurrentAnimation.ToString());
                 }
             }
             catch { }
+
+
+            if (RunStuckChecks)
+            {
+                _StuckCheckTimer += Time.deltaTime;
+                if (_StuckCheckTimer >= StuckCheckInterval)
+                {
+                    IsStuck = CheckIfStuck();
+                    _StuckCheckTimer = 0;
+                }
+            }
         }
         internal virtual void OnDestroy()
         {
-            LivingCreatures.Remove(this);
+            Deregister(this);
         }
         internal virtual void OnDisable()
         {
-            LivingCreatures.Remove(this);
+            Deregister(this);
         }
         internal virtual void OnEnable()
         {
-            LivingCreatures.Add(this);
+            RegisterCreature(this);
         }
-
+        #endregion
 
         #region Debug
+        #region Debug Display
+        [TabGroup("Main", "Debug"), FoldoutGroup("Main/Debug/Debug Data"), ShowInInspector, DisplayAsString]
+        protected internal List<Alive> NearbyCreatures { get; } = new();
+
+        [FoldoutGroup("Main/Debug/Debug Data"), ShowInInspector, DisplayAsString]
+        protected internal List<IInteractable> NearbyInteractables { get; } = new();
+
+        [SerializeField]
+        [FoldoutGroup("Main/Debug/Debug Data"), DisplayAsString]
+        protected internal Alive CurrentLivingTarget/* { get; set; }*/;
+
+        [FoldoutGroup("Main/Debug/Debug Data"), SerializeField, DisplayAsString, LabelText("CurrentInteractTarget")]
+        private string InspectorDisplayForCurrentInteractableTarget = "Null";
+
+
+        [FoldoutGroup("Main/Debug/Debug Data"), DisplayAsString, SerializeField, ShowIf("@IsPlayer == true")]
+        protected internal bool HasInteractableTarget = false;
+
+
+        [FoldoutGroup("Main/Debug/Debug Data"), DisplayAsString]
+        public Vector3 Velocity;
+        [SerializeField, ShowIf("@IsPlayer == false")]
+        [FoldoutGroup("Main/Debug/Debug Data"), DisplayAsString]
+        protected internal Vector3 _DebugCurrentDestination;
+
+        [FoldoutGroup("Main/Debug/Debug Data"), ReadOnly, Range(0, 360)]
+        public float TargetAngleDebug;
+
+        [FoldoutGroup("Main/Debug/Debug Data"), DisplayAsString]
+        public bool IsStuck = false;
+        [FoldoutGroup("Main/Debug/Debug Data"), DisplayAsString, SerializeField]
+        private float _StuckCheckTimer = 0f;
+
+
+        [FoldoutGroup("Main/Debug/Debug Data"), ShowInInspector, DisplayAsString]
+        internal bool IsPlayer =>
+            typeof(Player) == this.GetType();
+        #endregion
+
+        [ReadOnly, HideLabel, DisplayAsString, TabGroup("Main", "Debug")]
+        public string SpaceTheFinalFrontier = " ";
+
         #region Debug Variables
-        [TabGroup("Main", "Debug")]
+        [BoxGroup("Main/Debug/Debug Toggles")]
         public bool DebugData = false;
 
-        [TabGroup("Main", "Debug"), ShowIf("@DebugData == true && IsPlayer == false")]
+        [Indent, BoxGroup("Main/Debug/Debug Toggles"), ShowIf("@DebugData == true && IsPlayer == false")]
         public bool DrawDestinationGizmo = false;
-        [ShowIf("@DebugData == true && DrawDestinationGizmo && IsPlayer == false"), TabGroup("Main", "Debug")]
+        [Indent(2), ShowIf("@DebugData == true && DrawDestinationGizmo && IsPlayer == false"), BoxGroup("Main/Debug/Debug Toggles")]
         public float DestinationGizmoSize = 1f;
-        [ShowIf("@DebugData == true && DrawDestinationGizmo == true && IsPlayer == false"), TabGroup("Main", "Debug")]
+        [Indent(2), ShowIf("@DebugData == true && DrawDestinationGizmo == true && IsPlayer == false"), BoxGroup("Main/Debug/Debug Toggles")]
         public Color DestinationColor = Color.cyan;
 
-        [ShowIf("@DebugData == true && DrawDestinationGizmo == true && IsPlayer == false"), TabGroup("Main", "Debug")]
+        [Indent, ShowIf("@DebugData == true && IsPlayer == false"), BoxGroup("Main/Debug/Debug Toggles")]
         public bool DrawDestinationDistanceGizmo = false;
-        [ShowIf("@DebugData == true && DrawDestinationDistanceGizmo == true && IsPlayer == false"), TabGroup("Main", "Debug")]
+        [Indent(2), ShowIf("@DebugData == true && DrawDestinationDistanceGizmo == true && IsPlayer == false"), BoxGroup("Main/Debug/Debug Toggles")]
         public Color DestinationDistanceColor = Color.red;
 
-        [ShowIf("@DebugData == true"), TabGroup("Main", "Debug")]
+        [Indent, ShowIf("@DebugData == true && IsPlayer == false"), BoxGroup("Main/Debug/Debug Toggles")]
         public bool DrawSightAngles = false;
-        [ShowIf("@DebugData == true && DrawSightAngles"), TabGroup("Main", "Debug")]
+        [Indent(2), ShowIf("@DebugData == true && DrawSightAngles"), BoxGroup("Main/Debug/Debug Toggles")]
         public Vector3 AngleVisualOffset = new();
-        [ShowIf("@DebugData == true && DrawSightAngles"), TabGroup("Main", "Debug")]
+        [Indent(2), ShowIf("@DebugData == true && DrawSightAngles"), BoxGroup("Main/Debug/Debug Toggles")]
         public Color SightGizmoColor = Color.yellow;
         
-        [ShowIf("@DebugData == true"), TabGroup("Main", "Debug")]
+        [Indent, ShowIf("@DebugData == true"), BoxGroup("Main/Debug/Debug Toggles")]
         public bool DrawInteractAngles = false;
-        [ShowIf("@DebugData == true && DrawInteractAngles"), TabGroup("Main", "Debug")]
+        [Indent(2), ShowIf("@DebugData == true && DrawInteractAngles"), BoxGroup("Main/Debug/Debug Toggles")]
         public Vector3 InteractVisualOffset = new();
-        [ShowIf("@DebugData == true && DrawInteractAngles"), TabGroup("Main", "Debug")]
+        [Indent(2), ShowIf("@DebugData == true && DrawInteractAngles"), BoxGroup("Main/Debug/Debug Toggles")]
         public Color InteractGizmoColor = Color.yellow;
 
-        [ShowIf("@DebugData == true && IsPlayer == false"), TabGroup("Main", "Debug")]
+        [Indent, ShowIf("@DebugData == true && IsPlayer == false"), BoxGroup("Main/Debug/Debug Toggles")]
         public bool DrawDistanceToPlayerGizmo = false;
-        [ShowIf("@DebugData == true && DrawDistanceToPlayerGizmo == true && IsPlayer == false"), TabGroup("Main", "Debug")]
+        [Indent(2), ShowIf("@DebugData == true && DrawDistanceToPlayerGizmo == true && IsPlayer == false"), BoxGroup("Main/Debug/Debug Toggles")]
         public Color DistanceToPlayerColor = Color.blue;
 
-        [ShowIf("@DebugData == true"), TabGroup("Main", "Debug")]
+        [Indent, ShowIf("@DebugData == true"), BoxGroup("Main/Debug/Debug Toggles")]
         public bool DrawNearbyCreaturesGizmo = false;
-        [ShowIf("@DebugData == true && DrawNearbyCreaturesGizmo"), TabGroup("Main", "Debug")]
+        [Indent(2), ShowIf("@DebugData == true && DrawNearbyCreaturesGizmo == true"), BoxGroup("Main/Debug/Debug Toggles")]
         public Color NearbyCreaturesColor = Color.red;
 
-        [ShowIf("@DebugData == true"), TabGroup("Main", "Debug")]
+        [Indent, ShowIf("@DebugData == true"), BoxGroup("Main/Debug/Debug Toggles")]
         public bool DrawFeetPositionCalculation = false;
-        [ShowIf("@DebugData == true"), TabGroup("Main", "Debug")]
+        [Indent(2), ShowIf("@DebugData == true && DrawFeetPositionCalculation == true"), BoxGroup("Main/Debug/Debug Toggles")]
         public float FeetPositionGizmoSize = 0.3f;
-        [ShowIf("@DebugData == true && DrawFeetPositionCalculation"), TabGroup("Main", "Debug")]
+        [Indent(2), ShowIf("@DebugData == true && DrawFeetPositionCalculation == true"), BoxGroup("Main/Debug/Debug Toggles")]
         public Color FeetPositionColor = Color.white;
+
+        [Indent, ShowIf("@DebugData == true && IsPlayer == false"), BoxGroup("Main/Debug/Debug Toggles")]
+        public bool PrintStuckCorrectionLogs = false;
         #endregion
 
 
@@ -425,13 +587,13 @@ namespace Assets.Entities
                     if (MaxAngleDetection < 360)
                     {
                         //Left
-                        Gizmos.DrawLine(transform.position + AngleVisualOffset, AngleVisualOffset + transform.position + (Quaternion.Euler(0, MaxAngleDetection / 2, 0) * (transform.forward * MaxDetectionDistance)));
+                        Gizmos.DrawLine(transform.position + AngleVisualOffset, AngleVisualOffset + transform.position + (Quaternion.Euler(0, MaxAngleDetection / 2, 0) * (transform.forward * MaxSightDistanceToTarget)));
                         //Right
-                        Gizmos.DrawLine(transform.position + AngleVisualOffset, (AngleVisualOffset + transform.position + (Quaternion.Euler(0, -MaxAngleDetection / 2, 0) * (transform.forward * MaxDetectionDistance))));
+                        Gizmos.DrawLine(transform.position + AngleVisualOffset, (AngleVisualOffset + transform.position + (Quaternion.Euler(0, -MaxAngleDetection / 2, 0) * (transform.forward * MaxSightDistanceToTarget))));
                     }
                     else
                     {
-                        Gizmos.DrawWireSphere(transform.position + AngleVisualOffset, MaxDetectionDistance);
+                        Gizmos.DrawWireSphere(transform.position + AngleVisualOffset, MaxHearingDistanceToTarget);
                     }
                 }
 
@@ -439,25 +601,25 @@ namespace Assets.Entities
                 if (DrawInteractAngles)
                 {
                     Gizmos.color = InteractGizmoColor;
-                    if (MinTargettingDegrees < 360)
+                    if (MaxTargetingDegrees < 360)
                     {
                         //Left
-                        Gizmos.DrawLine(transform.position + InteractVisualOffset, InteractVisualOffset + transform.position + (Quaternion.Euler(0, MinTargettingDegrees / 2, 0) * (transform.forward * MinDistanceToTarget)));
+                        Gizmos.DrawLine(transform.position + InteractVisualOffset, InteractVisualOffset + transform.position + (Quaternion.Euler(0, MaxTargetingDegrees / 2, 0) * (transform.forward * MaxAttackOrInteractDistance)));
                         //Left
-                        Gizmos.DrawLine(transform.position + InteractVisualOffset, InteractVisualOffset + transform.position + (Quaternion.Euler(0, -MinTargettingDegrees / 2, 0) * (transform.forward * MinDistanceToTarget)));
+                        Gizmos.DrawLine(transform.position + InteractVisualOffset, InteractVisualOffset + transform.position + (Quaternion.Euler(0, -MaxTargetingDegrees / 2, 0) * (transform.forward * MaxAttackOrInteractDistance)));
                     }
                     else
                     {
-                        Gizmos.DrawWireSphere(transform.position + InteractVisualOffset, MinDistanceToTarget);
+                        Gizmos.DrawWireSphere(transform.position + InteractVisualOffset, MaxAttackOrInteractDistance);
                     }
                 }
 
 
                 //Distance to Player
-                if (DrawDistanceToPlayerGizmo && CurrentLivingTarget != null)
+                if (DrawDistanceToPlayerGizmo && Player.PlayerInstance != null)
                 {
                     Gizmos.color = DistanceToPlayerColor;
-                    Gizmos.DrawLine(CurrentLivingTarget.transform.position, CurrentLivingTarget.transform.position + Vector3.Normalize(transform.position - CurrentLivingTarget.transform.position));
+                    Gizmos.DrawLine(transform.position, Player.PlayerInstance.position);
                 }
 
                 //Distance to Nearby Creatures
@@ -477,7 +639,6 @@ namespace Assets.Entities
                 }
             }
         }
-        #endregion
         #endregion
     }
 }

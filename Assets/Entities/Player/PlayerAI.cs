@@ -22,6 +22,8 @@ public class PlayerAI : AIHandler
         PlayerEngine playerEngine = entity.Engine as PlayerEngine;
         Camera playerCamera = player.MainCamera;
 
+        if (!entity.IsAlive)
+            return AnimationType.Dead;
 
         // Calculate the sensitivity based on the magnitude of the input vector
         float inputMagnitude = new Vector2(Player.MouseX, Player.MouseY).magnitude;
@@ -30,6 +32,15 @@ public class PlayerAI : AIHandler
         playerCamera.transform.position += playerCamera.transform.up * Mathf.Clamp(Player.MouseY, -1, 1) * sensitivity
                                             +
                                           playerCamera.transform.right * Mathf.Clamp(Player.MouseX, -1, 1) * sensitivity;
+
+        if (Input.GetAxis("EmotesMenu") == 1)
+        {
+            //Fire event to open emotes menu
+        }
+        else if (Input.GetAxis("EmotesMenu") == 0)
+        {
+            //Fire event to close emotes menu
+        } //Perhaps a toggle for the event?
 
         isGrounded = entity.IsGrounded();
         isJumping = Input.GetAxis("Jump") != 0;
@@ -69,14 +80,6 @@ public class PlayerAI : AIHandler
             {
 
             }
-            //else if (Input.GetKeyDown(KeyCode.LeftAlt) && !isCrouching)
-            //{
-            //    isCrouching = true;
-            //}
-            //else if (Input.GetKeyDown(KeyCode.LeftAlt) && isCrouching)
-            //{
-            //    isCrouching = false;
-            //}
 
 
             //Calculate how to handle movement
@@ -127,5 +130,5 @@ public class PlayerAI : AIHandler
         return AnimationType.Idle;
     }
 
-    protected internal override bool SearchForTarget(Alive entity) => false;
+    protected internal override bool SearchForTarget(Alive thisEntity, Alive DesiredTarget = null) => false;
 }

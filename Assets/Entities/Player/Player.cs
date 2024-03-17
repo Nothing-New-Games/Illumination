@@ -9,25 +9,25 @@ public class Player : Alive
     [HideInInspector]
     public Camera MainCamera { get; private set; }
 
-    [DisplayAsString, TabGroup("Main", "Debug Data"), ShowInInspector]
+    [FoldoutGroup("Main/Debug/Debug Data"), DisplayAsString, ShowInInspector]
     public static float MouseY;
-    [DisplayAsString, TabGroup("Main", "Debug Data"), ShowInInspector]
+    [FoldoutGroup("Main/Debug/Debug Data"), DisplayAsString, ShowInInspector]
     public static float MouseX;
 
-    [TabGroup("Main", "Movement")]
+    [TabGroup("Main/Stats/StatsSubTabs", "Movement")]
     public Vector3 JumpVelocity;
-    [TabGroup("Main", "Movement")]
-    public float FallingMovementReduction;
+    [TabGroup("Main/Stats/StatsSubTabs", "Movement")]
+    public float FallingMovementReduction = 1f;
 
 
-    [TabGroup("Main", "Player Settings")]
+    [TabGroup("Main/Stats/StatsSubTabs", "Player Settings")]
     public float CameraSensitivity = 0.3f;
-    [TabGroup("Main", "Player Settings")]
+    [TabGroup("Main/Stats/StatsSubTabs", "Player Settings")]
     public bool InvertCameraX = false;
-    [TabGroup("Main", "Player Settings")]
+    [TabGroup("Main/Stats/StatsSubTabs", "Player Settings")]
     public bool InvertCameraY = false;
 
-    [OnValueChanged("SwitchGFX"), TabGroup("Main", "Debug")]
+    [OnValueChanged("SwitchGFX"), BoxGroup("Main/Debug/Debug Toggles")]
     [LabelText("$UseTestGFXString")]
     public bool UseTestGFX = false;
     private string UseTestGFXString => $"Use Test GFX ({UseTestGFX})";

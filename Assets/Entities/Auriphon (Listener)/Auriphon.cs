@@ -10,11 +10,6 @@ public class Auriphon : Alive
         CurrentHealth -= source.Damage;
     }
 
-    internal override void CreateEngine()
-    {
-        Engine = new AuriphonEngine();
-    }
-
     public override void OnDeath()
     {
         //These cannot take damage, so no death necessary.
