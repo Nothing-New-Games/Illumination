@@ -236,35 +236,6 @@ namespace Assets.Entities
 
         internal virtual void CreateEngine() => Engine = new();
 
-        Vector3 _PreviousPositionForStuckCheck;
-        LayerMask _ObstacleLayer;
-        internal virtual bool CheckIfStuck()
-        {
-            if (IsPerformingAnimation(AnimationType.Idle))
-                return false;
-
-            Vector3 currentPosition = RB.position;
-            float distanceMoved = Vector3.Distance(_PreviousPositionForStuckCheck, currentPosition);
-
-            if (distanceMoved < 0.1f) // Adjust threshold as needed
-            {
-                AI.GetUnstuck(this);
-                Debug.LogWarning("NPC is stuck due to lack of movement!");
-                return true;
-            }
-            RaycastHit hit;
-
-            if (Physics.Raycast(transform.position, transform.forward, out hit, PositioningCorrectionDistance, _ObstacleLayer))
-            {
-                if (PrintStuckCorrectionLogs)
-                    Debug.LogWarning($"NPC is stuck due to continuous collision with {hit.transform.name}!");
-                AI.GetUnstuck(this);
-            }
-
-            _PreviousPositionForStuckCheck = currentPosition;
-            return false;
-        }
-
         private void UpdateInteractableTargetDisplay()
         {
             if (CurrentInteractTarget == null)
@@ -383,7 +354,6 @@ namespace Assets.Entities
             CreateEngine();
             Engine.UpdateVariables(this, transform.position);
             FindEntityHeight();
-            _ObstacleLayer = ~LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer));
         }
         internal virtual void Start()
         {
@@ -438,17 +408,6 @@ namespace Assets.Entities
                 }
             }
             catch { }
-
-
-            if (RunStuckChecks)
-            {
-                _StuckCheckTimer += Time.deltaTime;
-                if (_StuckCheckTimer >= StuckCheckInterval)
-                {
-                    IsStuck = CheckIfStuck();
-                    _StuckCheckTimer = 0;
-                }
-            }
         }
         internal virtual void OnDestroy()
         {
@@ -496,7 +455,7 @@ namespace Assets.Entities
         [FoldoutGroup("Main/Debug/Debug Data"), DisplayAsString]
         public bool IsStuck = false;
         [FoldoutGroup("Main/Debug/Debug Data"), DisplayAsString, SerializeField]
-        private float _StuckCheckTimer = 0f;
+        protected internal float _StuckCheckTimer = 0f;
 
 
         [FoldoutGroup("Main/Debug/Debug Data"), ShowInInspector, DisplayAsString]

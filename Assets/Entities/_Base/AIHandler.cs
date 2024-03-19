@@ -87,7 +87,7 @@ namespace Assets.Entities.AI
 
 
             //Move to chosen destination.
-            entity.Engine.MoveToDestination();
+            entity.Engine.HandleMovement();
 
             if (IsWalking)
                 return AnimationType.Walk;
@@ -106,6 +106,7 @@ namespace Assets.Entities.AI
             return NewDestination;
         }
 
+        
         /// <summary>
         /// Searches for the player and returns true if they have been detected.
         /// </summary>
@@ -141,19 +142,6 @@ namespace Assets.Entities.AI
             totalDetectionChance = thisEntity.BaseDetectionChance * sightDetectionChance + hearingDetectionChance;
 
             return Random.Range(0f, 100f) <= totalDetectionChance * angleFactor;
-        }
-
-        //Method here for determining if we're stuck?
-        protected internal virtual void GetUnstuck(Alive entity)
-        {
-            //Debug.LogError("No logic written for getting unstuck!");
-            entity.PauseMovement = true;
-            entity.transform.rotation *= Quaternion.Euler(0f, 22.5f, 0);
-            entity.Engine.CurrentDestination =
-                entity.transform.forward * (Vector3.Distance(entity.transform.position, entity.Engine.CurrentPosition) * 2)
-                +
-                (entity.transform.position);
-            entity.PauseMovement = false;
         }
     }
 }

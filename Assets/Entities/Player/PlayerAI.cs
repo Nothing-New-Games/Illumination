@@ -107,7 +107,7 @@ public class PlayerAI : AIHandler
         playerEngine.SetMovementFactor(movementFactor);
         playerEngine.UpdateVariables(entity);
         if (isGrounded)
-            playerEngine.MoveToDestination();
+            playerEngine.HandleMovement();
         else
         {
             isRunning = false;

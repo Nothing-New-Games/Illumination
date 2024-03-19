@@ -9,7 +9,7 @@ public class PlayerEngine : MovementEngine
     Vector3 _MovementFactor;
     bool _HasJumped { get; set; }   
 
-    protected internal override void MoveToDestination()
+    protected internal override void HandleMovement()
     {
         Player player = _Entity as Player;
 
