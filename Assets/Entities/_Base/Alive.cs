@@ -63,8 +63,12 @@ namespace Assets.Entities
         public bool PauseMovement;
         [TabGroup("Main/Stats/StatsSubTabs", "Movement")]
         public bool RunStuckChecks = true;
+        [TabGroup("Main/Stats/StatsSubTabs", "Movement"), ShowIf("@IsPlayer == false")]
+        public bool FreeRoam = true;
         [TabGroup("Main/Stats/StatsSubTabs", "Movement")]
         public float BaseMovementSpeed = 5f;
+        [TabGroup("Main/Stats/StatsSubTabs", "Movement"), ShowIf("@IsPlayer == false")]
+        public float RotationSpeed = 5f;
         [TabGroup("Main/Stats/StatsSubTabs", "Movement")]
         public float RunMovementMultiplier = 2f;
         [TabGroup("Main/Stats/StatsSubTabs", "Movement"), ShowIf("@IsPlayer == false")]
@@ -77,6 +81,12 @@ namespace Assets.Entities
         public float MaxIdleDuration = 15f;
         [TabGroup("Main/Stats/StatsSubTabs", "Movement"), ShowIf("@IsPlayer == false")]
         public float PositioningCorrectionDistance = 3f;
+        [TabGroup("Main/Stats/StatsSubTabs", "Movement"), ShowIf("@IsPlayer == false")]
+        public int MaxStuckCounter = 3;
+        [TabGroup("Main/Stats/StatsSubTabs", "Movement"), ShowIf("@IsPlayer == false")]
+        public float StuckCorrectionDegrees = 90f;
+        [TabGroup("Main/Stats/StatsSubTabs", "Movement"), ShowIf("@IsPlayer == false")]
+        public Vector3 FeetPosition = Vector3.zero;
         protected internal float _CurrentMovementSpeedValue = 0f;
 
 
@@ -162,11 +172,11 @@ namespace Assets.Entities
         {
             Alive closest = null;
             float lastRecordedDistance = 0f;
-            foreach (var creature in Alive.LivingCreatures)
+            foreach (var creature in NearbyCreatures)
             {
-                if (Vector3.Distance(transform.position, creature.transform.position) < lastRecordedDistance)
+                if (Vector3.Distance(transform.position, creature.transform.position) < lastRecordedDistance || lastRecordedDistance == 0)
                 {
-                    lastRecordedDistance = Vector3.Distance(transform.position, closest.transform.position);
+                    lastRecordedDistance = Vector3.Distance(transform.position, creature.transform.position);
                     closest = creature;
                 }
             }
@@ -194,11 +204,27 @@ namespace Assets.Entities
         }
         protected internal bool IsGrounded()
         {
-            Ray ray = new Ray(transform.position, -transform.up);
-            RaycastHit hit;
-            Physics.Raycast(ray, out hit, 0.3f + meshHeight /2);
-            if (hit.transform != null)
-                return LayerMask.LayerToName(hit.transform.gameObject.layer) == "Ground";
+            Ray rayDown = new Ray(transform.position + FeetPosition, -transform.up);
+            RaycastHit hitDown;
+            
+            Ray rayUp = new Ray(transform.position + FeetPosition, transform.up);
+            RaycastHit BIRDUP;
+
+
+            Physics.Raycast(rayDown, out hitDown, 0.7f + meshHeight /2);
+            Physics.Raycast(rayUp, out BIRDUP, 0.7f + meshHeight /2);
+            if (hitDown.transform != null)
+                return LayerMask.LayerToName(hitDown.transform.gameObject.layer) == "Ground";
+            if (BIRDUP.transform != null)
+            {
+                if (LayerMask.LayerToName(BIRDUP.transform.gameObject.layer) == "Ground")
+                {
+                    Debug.LogWarning($"{name.ToUpper()} IS BELOW THE FLOOR! BIRDUP!!!");
+                    transform.position += new Vector3(0, 1, 0);
+                }
+
+                return false;
+            }
                 //return hit.transform.tag == "Walkable";
             else return false;
         }
@@ -211,7 +237,7 @@ namespace Assets.Entities
                 collider = GetComponent<Collider>();
             }
 
-            meshHeight = collider.bounds.size.y;
+            //meshHeight = collider.bounds.size.y;
         }
         protected internal bool CloseToTarget()
         {
@@ -228,9 +254,18 @@ namespace Assets.Entities
             Velocity = RB.velocity;
         }
 
-        internal bool IsPerformingAnimation(AnimationType animation)
+        internal bool IsPerformingAnimations(params AnimationType[] animations)
         {
-            return _Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name.ToLower().Contains(animation.ToString().ToLower());
+            try
+            {
+                AnimationType animationCheck = animations.First(anim => _Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name.ToLower().Contains(anim.ToString().ToLower()));
+                return animationCheck != default;
+            }
+            catch
+            {
+                return false;
+            }
+            //return _Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name.ToLower().Contains(animations.ToString().ToLower());
         }
         internal virtual void CreateAI() => AI = new();
 
@@ -266,6 +301,7 @@ namespace Assets.Entities
                         NearbyCreatures.Add(creature);
                 }
                 else if (DrawNearbyCreaturesGizmo) Debug.Log($"{name} IS DEAF AND BLIND AND DUMB AND BORN TO FOLLOW!");
+                //Need a generic distance value for the player when calculating this. Do that later, I can't be bothered right now.
             }
         }
 
@@ -354,6 +390,7 @@ namespace Assets.Entities
             CreateEngine();
             Engine.UpdateVariables(this, transform.position);
             FindEntityHeight();
+            _SpawnLocation = transform.position;
         }
         internal virtual void Start()
         {
@@ -392,8 +429,8 @@ namespace Assets.Entities
                 AI.Handle(this);
             }
 
-
-            _Animator.ResetTrigger(CurrentAnimation.ToString());
+            if (CurrentAnimation != AnimationType.Default || CurrentAnimation != AnimationType.PreventNewAnimation)
+                _Animator.ResetTrigger(CurrentAnimation.ToString());
             //Get the animation that is supposed to be playing.
             //AI method that returns enum of the current animation.
             //The AI will handle the movement calculations and return the proper animation.
@@ -401,7 +438,7 @@ namespace Assets.Entities
 
             try
             {
-                if (!IsPerformingAnimation(CurrentAnimation))
+                if (!IsPerformingAnimations(CurrentAnimation))
                 {
                     //Debug.Log("Good news, everyone!");
                     _Animator.SetTrigger(CurrentAnimation.ToString());
@@ -448,6 +485,9 @@ namespace Assets.Entities
         [SerializeField, ShowIf("@IsPlayer == false")]
         [FoldoutGroup("Main/Debug/Debug Data"), DisplayAsString]
         protected internal Vector3 _DebugCurrentDestination;
+        [SerializeField, ShowIf("@IsPlayer == false && FreeRoam == false")]
+        [FoldoutGroup("Main/Debug/Debug Data")]
+        protected internal Vector3 _SpawnLocation;
 
         [FoldoutGroup("Main/Debug/Debug Data"), ReadOnly, Range(0, 360)]
         public float TargetAngleDebug;
@@ -512,6 +552,11 @@ namespace Assets.Entities
         public float FeetPositionGizmoSize = 0.3f;
         [Indent(2), ShowIf("@DebugData == true && DrawFeetPositionCalculation == true"), BoxGroup("Main/Debug/Debug Toggles")]
         public Color FeetPositionColor = Color.white;
+        
+        [Indent, ShowIf("@DebugData == true"), BoxGroup("Main/Debug/Debug Toggles")]
+        public bool DrawSpawnLocationGizmo = false;
+        [Indent(2), ShowIf("@DebugData == true && DrawSpawnLocationGizmo == true"), BoxGroup("Main/Debug/Debug Toggles")]
+        public Color SpawnLocationGizmoColor = Color.white;
 
         [Indent, ShowIf("@DebugData == true && IsPlayer == false"), BoxGroup("Main/Debug/Debug Toggles")]
         public bool PrintStuckCorrectionLogs = false;
@@ -594,7 +639,13 @@ namespace Assets.Entities
                 if (DrawFeetPositionCalculation)
                 {
                     Gizmos.color = FeetPositionColor;
-                    Gizmos.DrawWireSphere(new Vector3(transform.position.x, transform.position.y - (meshHeight /2), transform.position.z), FeetPositionGizmoSize);
+                    Gizmos.DrawWireSphere(FeetPosition + transform.position, FeetPositionGizmoSize);
+                }
+
+                if (DrawSpawnLocationGizmo && _SpawnLocation != Vector3.zero)
+                {
+                    Gizmos.color = SpawnLocationGizmoColor;
+                    Gizmos.DrawWireCube(new Vector3(_SpawnLocation.x, _SpawnLocation.y + 5, _SpawnLocation.z), new Vector3(MaxWanderDistXY.x * 2, 5, MaxWanderDistXY.y * 2));
                 }
             }
         }

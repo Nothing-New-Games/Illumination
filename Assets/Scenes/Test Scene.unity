@@ -333,13 +333,18 @@ MonoBehaviour:
   IsAlive: 1
   PauseMovement: 0
   RunStuckChecks: 1
+  FreeRoam: 1
   BaseMovementSpeed: 5
+  RotationSpeed: 5
   RunMovementMultiplier: 2
   MinDistanceToDestination: 1
   MaxWanderDistXY: {x: 0, y: 0}
   MinIdleDuration: 3
   MaxIdleDuration: 15
   PositioningCorrectionDistance: 3
+  MaxStuckCounter: 3
+  StuckCorrectionDegrees: 90
+  FeetPosition: {x: 0, y: 0, z: 0}
   StuckCheckInterval: 3
   MaxAttackOrInteractDistance: 5
   MaxSightDistanceToTarget: 45
@@ -360,6 +365,7 @@ MonoBehaviour:
   HasInteractableTarget: 0
   Velocity: {x: 0, y: 0, z: 0}
   _DebugCurrentDestination: {x: 0, y: 0, z: 0}
+  _SpawnLocation: {x: 0, y: 0, z: 0}
   TargetAngleDebug: 0
   IsStuck: 0
   _StuckCheckTimer: 0
@@ -383,6 +389,8 @@ MonoBehaviour:
   DrawFeetPositionCalculation: 0
   FeetPositionGizmoSize: 0.3
   FeetPositionColor: {r: 1, g: 1, b: 1, a: 1}
+  DrawSpawnLocationGizmo: 0
+  SpawnLocationGizmoColor: {r: 1, g: 1, b: 1, a: 1}
   PrintStuckCorrectionLogs: 0
 --- !u!54 &28224662
 Rigidbody:
@@ -1342,13 +1350,18 @@ MonoBehaviour:
   IsAlive: 1
   PauseMovement: 0
   RunStuckChecks: 1
+  FreeRoam: 1
   BaseMovementSpeed: 200
+  RotationSpeed: 5
   RunMovementMultiplier: 5
   MinDistanceToDestination: 1
   MaxWanderDistXY: {x: 30, y: 30}
   MinIdleDuration: 3
   MaxIdleDuration: 15
   PositioningCorrectionDistance: 3
+  MaxStuckCounter: 3
+  StuckCorrectionDegrees: 90
+  FeetPosition: {x: 0, y: 0, z: 0}
   StuckCheckInterval: 3
   MaxAttackOrInteractDistance: 30
   MaxSightDistanceToTarget: 3
@@ -1369,6 +1382,7 @@ MonoBehaviour:
   HasInteractableTarget: 0
   Velocity: {x: 0, y: 0, z: 0}
   _DebugCurrentDestination: {x: 0, y: 0, z: 0}
+  _SpawnLocation: {x: 0, y: 0, z: 0}
   TargetAngleDebug: 0
   IsStuck: 0
   _StuckCheckTimer: 0
@@ -1392,6 +1406,8 @@ MonoBehaviour:
   DrawFeetPositionCalculation: 0
   FeetPositionGizmoSize: 0.3
   FeetPositionColor: {r: 1, g: 1, b: 1, a: 1}
+  DrawSpawnLocationGizmo: 0
+  SpawnLocationGizmoColor: {r: 1, g: 1, b: 1, a: 1}
   PrintStuckCorrectionLogs: 0
 --- !u!143 &513522553
 CharacterController:
@@ -2114,6 +2130,231 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1479877608
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: IsDeaf
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: IsBlind
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: Damage.x
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: Damage.y
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: FreeRoam
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: DebugData
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: PauseMovement
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: RotationSpeed
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: FeetPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: FeetPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: FeetPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: RunStuckChecks
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: DrawSightAngles
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: MaxIdleDuration
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: MaxStuckCounter
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: MinIdleDuration
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: MaxWanderDistXY.x
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: MaxWanderDistXY.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: DrawInteractAngles
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: StuckCheckInterval
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: DrawDestinationGizmo
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: InteractGizmoColor.b
+      value: 0.03730417
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: InteractGizmoColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: DrawSpawnLocationGizmo
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: StuckCorrectionDegrees
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: DrawNearbyCreaturesGizmo
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: MinDistanceToDestination
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: PrintStuckCorrectionLogs
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: DrawDistanceToPlayerGizmo
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: SpawnLocationGizmoColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: SpawnLocationGizmoColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: SpawnLocationGizmoColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: MaxHearingDistanceToTarget
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: DrawFeetPositionCalculation
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: DrawDestinationDistanceGizmo
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 320961090600540830, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: PositioningCorrectionDistance
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2571483868931937604, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 7.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 2571483868931937604, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 20.94
+      objectReference: {fileID: 0}
+    - target: {fileID: 3228870969923670771, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: m_Name
+      value: Auriphon
+      objectReference: {fileID: 0}
+    - target: {fileID: 4480926770286931898, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: m_Height
+      value: 5.556237
+      objectReference: {fileID: 0}
+    - target: {fileID: 4480926770286931898, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: m_Radius
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4480926770286931898, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: m_Center.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4480926770286931898, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: m_Center.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4489204998615700542, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 30.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4489204998615700542, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 4.17
+      objectReference: {fileID: 0}
+    - target: {fileID: 4489204998615700542, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 40.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 4489204998615700542, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.38268238
+      objectReference: {fileID: 0}
+    - target: {fileID: 4489204998615700542, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.000000049787808
+      objectReference: {fileID: 0}
+    - target: {fileID: 4489204998615700542, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.92388
+      objectReference: {fileID: 0}
+    - target: {fileID: 4489204998615700542, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.00000012019878
+      objectReference: {fileID: 0}
+    - target: {fileID: 4489204998615700542, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4489204998615700542, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4489204998615700542, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
 --- !u!1 &1487127567
 GameObject:
   m_ObjectHideFlags: 0
@@ -2289,6 +2530,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player (Zara)
       objectReference: {fileID: 0}
+    - target: {fileID: 4164371554036673866, guid: 495481b66999384429c51e3e192ea2f2, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6135657317613482921, guid: 495481b66999384429c51e3e192ea2f2, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -2354,13 +2599,18 @@ MonoBehaviour:
   IsAlive: 1
   PauseMovement: 0
   RunStuckChecks: 0
+  FreeRoam: 1
   BaseMovementSpeed: 200
+  RotationSpeed: 5
   RunMovementMultiplier: 1.6
   MinDistanceToDestination: 1
   MaxWanderDistXY: {x: 0, y: 0}
   MinIdleDuration: 3
   MaxIdleDuration: 5
   PositioningCorrectionDistance: 3
+  MaxStuckCounter: 3
+  StuckCorrectionDegrees: 90
+  FeetPosition: {x: 0, y: 0, z: 0}
   StuckCheckInterval: 3
   MaxAttackOrInteractDistance: 30
   MaxSightDistanceToTarget: 3
@@ -2381,6 +2631,7 @@ MonoBehaviour:
   HasInteractableTarget: 0
   Velocity: {x: 0, y: 0, z: 0}
   _DebugCurrentDestination: {x: 0, y: 0, z: 0}
+  _SpawnLocation: {x: 0, y: 0, z: 0}
   TargetAngleDebug: 0
   IsStuck: 0
   _StuckCheckTimer: 0
@@ -2399,11 +2650,13 @@ MonoBehaviour:
   InteractGizmoColor: {r: 0.015686274, g: 0.25839588, b: 1, a: 1}
   DrawDistanceToPlayerGizmo: 1
   DistanceToPlayerColor: {r: 0, g: 0, b: 1, a: 1}
-  DrawNearbyCreaturesGizmo: 1
+  DrawNearbyCreaturesGizmo: 0
   NearbyCreaturesColor: {r: 1, g: 0, b: 0, a: 1}
   DrawFeetPositionCalculation: 1
   FeetPositionGizmoSize: 0.3
   FeetPositionColor: {r: 1, g: 1, b: 1, a: 1}
+  DrawSpawnLocationGizmo: 0
+  SpawnLocationGizmoColor: {r: 1, g: 1, b: 1, a: 1}
   PrintStuckCorrectionLogs: 0
   JumpVelocity: {x: 0, y: 5, z: 0}
   FallingMovementReduction: 1
@@ -7404,6 +7657,7 @@ SceneRoots:
   - {fileID: 705507995}
   - {fileID: 963194228}
   - {fileID: 1492262785}
+  - {fileID: 1479877608}
   - {fileID: 1320731995}
   - {fileID: 473765641}
   - {fileID: 20479141}

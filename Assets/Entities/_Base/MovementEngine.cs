@@ -1,4 +1,5 @@
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using static UnityEngine.EventSystems.EventTrigger;
 
@@ -26,6 +27,7 @@ namespace Assets.Entities.AI
             MinDistanceToDest = entity.MinDistanceToDestination;
             CurrentPosition = entity.transform.position;
             _Entity = entity;
+            _CurrentStuckCheckInterval = _Entity.StuckCheckInterval;
             if (destination != default)
                 CurrentDestination = destination;
         }
@@ -36,9 +38,10 @@ namespace Assets.Entities.AI
         Vector3 _PreviousPositionForStuckCheck;
         LayerMask _ObstacleLayer;
         private Vector3 _TempPosToGetUnstuck;
-        private Vector3 _DesiredRotationForUnstuckifying;
         private bool _PerformingAntiStuck;
         private float _CurrentStuckCheckInterval;
+        protected internal int _StuckCheckCounter = 0;
+
         protected internal virtual void HandleMovement()
         {
             #region Error Handling
@@ -64,41 +67,41 @@ namespace Assets.Entities.AI
 
                     if (_PerformingAntiStuck)
                     {
-                        _DesiredRotationForUnstuckifying = _Entity.transform.rotation * Quaternion.Euler(0f, 22.5f, 0).eulerAngles;
-                        _TempPosToGetUnstuck = _DesiredRotationForUnstuckifying
-                                               * (Vector3.Distance(_Entity.transform.position, CurrentPosition) * 2)
-                                               + _Entity.transform.position;
+                        _TempPosToGetUnstuck = 
+                            _Entity.transform.position + 
+                            (Quaternion.Euler(0, _Entity.StuckCorrectionDegrees / 2, 0) * 
+                            (_Entity.transform.forward * 
+                            _Entity.PositioningCorrectionDistance));
                     }
                 }
             }
+            else _PerformingAntiStuck = false;
             
             if (IsMoving() && !_PerformingAntiStuck)
             {
                 MoveToDestination(CurrentDestination);
             }
-            else
+            else if (IsMoving())
             {
-                _Entity.transform.rotation = Quaternion.Lerp(_Entity.transform.rotation, 
-                    new Quaternion(_DesiredRotationForUnstuckifying.x, _DesiredRotationForUnstuckifying.y, _DesiredRotationForUnstuckifying.z, 0), 
-                    Time.deltaTime * 20f);
-
                 MoveToDestination(_TempPosToGetUnstuck);
-                _PerformingAntiStuck = CheckIfStuck();
             }
         }
 
         internal virtual bool CheckIfStuck()
         {
-            if (_Entity.IsPerformingAnimation(AnimationType.Idle))
+            if (_Entity.IsPerformingAnimations(AnimationType.Idle)/* || !_Entity.IsGrounded()*/)
                 return false;
 
             float distanceMoved = Vector3.Distance(_PreviousPositionForStuckCheck, _Entity.transform.position);
 
-            if (distanceMoved < 0.1f) // Adjust threshold as needed
+            if (distanceMoved < _Entity.PositioningCorrectionDistance / 4 && LookingAtTarget)
             {
-                Debug.LogWarning("NPC is stuck due to lack of movement!");
+                _StuckCheckCounter++;
+                Debug.LogWarning($"NPC has made {_StuckCheckCounter}/{_Entity.MaxStuckCounter} reports for being unable to move!");
                 return true;
             }
+
+
             RaycastHit hit;
 
             if (Physics.Raycast(_Entity.transform.position, _Entity.transform.forward, out hit, _Entity.PositioningCorrectionDistance, _ObstacleLayer))
@@ -112,38 +115,43 @@ namespace Assets.Entities.AI
             return false;
         }
 
+        private Vector3 _DesiredEulerRotation;
+        public bool LookingAtTarget =>
+            Vector3.Angle(_Entity.transform.forward, _DesiredEulerRotation) <= _Entity.MaxTargetingDegrees / 2;
         private void MoveToDestination(Vector3 DesiredDestination)
         {
             Vector3 CurrentDestinationWithoutYPos = new Vector3(DesiredDestination.x, _Entity.transform.position.y, DesiredDestination.z);
 
+            Ray ray = new Ray(_Entity.transform.position, CurrentDestinationWithoutYPos);
+            RaycastHit hit;
+            LayerMask mask = ~LayerMask.GetMask(LayerMask.LayerToName(_Entity.gameObject.layer), LayerMask.LayerToName(Player.PlayerInstance.gameObject.layer));
+
+            if (Physics.Raycast(ray, out hit, Vector3.Distance(_Entity.transform.position, CurrentDestinationWithoutYPos), mask) && hit.transform.name != "Terrain")
+            {
+                if (_Entity.PrintStuckCorrectionLogs)
+                    Debug.LogWarning($"{hit.transform.name} is in the way! Correcting position so as to not get stuck on a wall or some such!");
+                
+                CurrentDestinationWithoutYPos = hit.point - ((hit.point - _Entity.transform.position).normalized * _Entity.PositioningCorrectionDistance);
+                CurrentDestination = CurrentDestinationWithoutYPos;
+            }
+
+
             Vector3 movementFactor = Vector3.Normalize(CurrentDestinationWithoutYPos - _Entity.transform.position);
             movementFactor.y = 0;
 
-            _Entity.transform.LookAt(CurrentDestinationWithoutYPos);
+            _DesiredEulerRotation = (CurrentDestinationWithoutYPos - _Entity.transform.position).normalized;
+            _Entity.transform.rotation = Quaternion.RotateTowards
+                (
+                    _Entity.transform.rotation, 
+                    Quaternion.LookRotation(_DesiredEulerRotation), 
+                    _Entity.RotationSpeed * Time.deltaTime
+                );
+            //_Entity.transform.LookAt(CurrentDestinationWithoutYPos);
 
-            Ray ray = new Ray(_Entity.transform.position, _Entity.transform.forward);
-            RaycastHit hit;
-            LayerMask mask = ~LayerMask.GetMask(LayerMask.LayerToName(_Entity.gameObject.layer));
-
-            if (Physics.Raycast(ray, out hit, Vector3.Distance(_Entity.transform.position, CurrentDestinationWithoutYPos), mask))
-            {
-                if (!hit.transform.name.ToLower().Equals("terrain"))
-                {
-                    if (_Entity.CurrentLivingTarget != null)
-                    {
-                        //We handle this slightly different because we want the creature to be close before attacking where as a wall, we want them to be a comfortable distance away.
-                        CurrentDestinationWithoutYPos = new Vector3(hit.point.x - _Entity.MinDistanceToDestination, hit.point.y, hit.point.z - _Entity.MinDistanceToDestination);
-                    }
-                    else if (_Entity.PrintStuckCorrectionLogs)
-                    {
-                        Debug.LogWarning($"{hit.transform.name} is in the way! Correcting position so as to not get stuck on a wall or some such!");
-                        CurrentDestinationWithoutYPos = new Vector3(hit.point.x - _Entity.PositioningCorrectionDistance, hit.point.y, hit.point.z - _Entity.PositioningCorrectionDistance);
-                    }
-                }
-            }
 
             //Move to destination.
-            _Entity.RB.velocity = (movementFactor * _Entity._CurrentMovementSpeedValue) * Time.deltaTime;
+            if(_Entity.IsGrounded() && LookingAtTarget)
+                _Entity.RB.velocity = movementFactor * _Entity._CurrentMovementSpeedValue * Time.deltaTime;
         }
 
         internal virtual void UpdateMovementSpeed()

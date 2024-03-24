@@ -11,7 +11,8 @@ namespace Assets.Entities.AI
         /// <summary>
         /// This enum souly exists to say "Let us finish the current animation!"
         /// </summary>
-        PreventMovement,
+        Default,
+        PreventNewAnimation,
         Idle, Walk, Run, Attack, Push, Jumping, Falling, Dead, CrouchIdle, CrouchWalk, CrouchRun, Touch, Touchdown, Loot
     }
     #endregion
@@ -27,7 +28,8 @@ namespace Assets.Entities.AI
         /// <returns></returns>
         public virtual AnimationType Handle(Alive entity)
         {
-            if (entity.PauseMovement)
+            //We're not running Engine.Handle for some reason when we should be. Need to investigate
+            if (entity.PauseMovement/* || !entity.IsGrounded()*/)
                 return AnimationType.Idle;
 
             if (entity._CurrentMovementSpeedValue == 0)
@@ -38,8 +40,36 @@ namespace Assets.Entities.AI
 
             //Determine if the player is detected
             //If the player is detected, clear the idle timer and assign the player as a target.
-            if (SearchForTarget(entity, entity.ClosestLiving()))
-                entity.CurrentLivingTarget = Player.PlayerInstance.GetComponent<Player>();
+            var closestLiving = entity.ClosestLiving();
+            if (closestLiving != null)
+                if (closestLiving.IsPlayer)
+                    if (closestLiving.IsAlive)
+                    {
+                        if (SearchForTarget(entity, closestLiving))
+                            entity.CurrentLivingTarget = Player.PlayerInstance.GetComponent<Player>();
+                    }
+                    else if (entity.CurrentLivingTarget == closestLiving)
+                    {
+                        entity.CurrentLivingTarget = null;
+                    }
+
+
+            #region Attack and Attack Animation
+            //Check if we are close enough to the target to attack
+            if (entity.CurrentLivingTarget != null)
+                if (Vector3.Distance(entity.CurrentLivingTarget.transform.position, entity.transform.position) <= entity.MaxAttackOrInteractDistance)
+                {
+                    //Handle attacking the target.
+                    if (!entity.IsPerformingAnimations(AnimationType.Attack) && entity.IsPerformingAnimations(AnimationType.Idle))
+                    {
+                        entity.CurrentLivingTarget.DealDamage(new DamageSource(entity.gameObject, Random.Range(entity.Damage.x, entity.Damage.y)));
+
+                        //Return the attack animation.
+                        return AnimationType.Attack;
+                    }
+                    else return AnimationType.Idle;
+                }
+            #endregion
 
             #region Idle Animation
             //Idle = Current location
@@ -58,6 +88,13 @@ namespace Assets.Entities.AI
             #region Movement and Movement Animation
             bool IsWalking = entity._CurrentMovementSpeedValue == entity.BaseMovementSpeed;
 
+            if (entity.Engine._StuckCheckCounter >= entity.MaxStuckCounter)
+            {
+                entity.Engine.UpdateVariables(entity, GetNewDestination(entity));
+                Debug.LogWarning($"Engine has made the maximum allotted reports for being unable to move! Choosing a new destination!");
+                entity.Engine._StuckCheckCounter = 0;
+            }
+
             //If the movement speed is faster than the base speed
             if (!IsWalking && entity.CurrentLivingTarget != null)
             {
@@ -71,39 +108,37 @@ namespace Assets.Entities.AI
             }
             #endregion
 
-            #region Attack and Attack Animation
-            //Check if we are close enough to the target to attack
-            if (entity.CurrentLivingTarget != null)
-                if (Vector3.Distance(entity.CurrentLivingTarget.transform.position, entity.transform.position) <= entity.MaxAttackOrInteractDistance)
-                {
-                    //Handle attacking the target.
-                    //Call method from Entity.Attack?
-                    entity.CurrentLivingTarget.DealDamage(new DamageSource(entity.gameObject, Random.Range(entity.Damage.x, entity.Damage.y)));
-
-                    //Return the attack animation.
-                    return AnimationType.Attack;
-                }
-            #endregion
-
-
             //Move to chosen destination.
             entity.Engine.HandleMovement();
 
-            if (IsWalking)
+            if (IsWalking && entity.Engine.LookingAtTarget)
                 return AnimationType.Walk;
-            else return AnimationType.Run;
+            else if (entity.Engine.LookingAtTarget) return AnimationType.Run;
+            else return AnimationType.Idle;
         }
 
         private Vector3 GetNewDestination(Alive entity)
         {
-            Vector3 NewDestination = new Vector3
-                (
-                    Random.Range(-entity.MaxWanderDistXY.x, entity.MaxWanderDistXY.x),
-                    0,
-                    Random.Range(-entity.MaxWanderDistXY.y, entity.MaxWanderDistXY.y)
-                ) + entity.transform.position;
+            Vector3 newDestination;
 
-            return NewDestination;
+            if (entity.FreeRoam)
+                newDestination = new Vector3
+                    (
+                        Random.Range(-entity.MaxWanderDistXY.x, entity.MaxWanderDistXY.x),
+                        0,
+                        Random.Range(-entity.MaxWanderDistXY.y, entity.MaxWanderDistXY.y)
+                    ) + entity.transform.position;
+            else
+            {
+                newDestination = new Vector3
+                    (
+                        Random.Range(-entity.MaxWanderDistXY.x, entity.MaxWanderDistXY.x),
+                        0,
+                        Random.Range(-entity.MaxWanderDistXY.y, entity.MaxWanderDistXY.y)
+                    ) + entity._SpawnLocation;
+            }
+
+            return newDestination;
         }
 
         

@@ -45,21 +45,21 @@ public class PlayerAI : AIHandler
         isGrounded = entity.IsGrounded();
         isJumping = Input.GetAxis("Jump") != 0;
         isMoving = playerEngine.IsMoving();
-        if (entity.IsPerformingAnimation(AnimationType.Falling) && isGrounded)
+        if (entity.IsPerformingAnimations(AnimationType.Falling) && isGrounded)
             return AnimationType.Touchdown;
-        if (entity.IsPerformingAnimation(AnimationType.Touch))
-            return AnimationType.PreventMovement;
-        if (entity.IsPerformingAnimation(AnimationType.Loot))
-            return AnimationType.PreventMovement;
+        if (entity.IsPerformingAnimations(AnimationType.Touch))
+            return AnimationType.PreventNewAnimation;
+        if (entity.IsPerformingAnimations(AnimationType.Loot))
+            return AnimationType.PreventNewAnimation;
 
         if (Input.GetButtonUp("Interact") && isGrounded)
         {
-            if (entity.CurrentInteractTarget != null && !entity.IsPerformingAnimation(AnimationType.Touch))
+            if (entity.CurrentInteractTarget != null && !entity.IsPerformingAnimations(AnimationType.Touch))
             {
                 entity.CurrentInteractTarget.Interact();
                 return AnimationType.Touch;
             }
-            else if (!entity.IsPerformingAnimation(AnimationType.Touch))
+            else if (!entity.IsPerformingAnimations(AnimationType.Touch))
                 Debug.Log("No interactable object nearby!");
             else Debug.Log("You are already interacting with something!");
         }
