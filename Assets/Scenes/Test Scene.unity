@@ -532,15 +532,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d23fbeef554758448844364dacdd9517, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeSize: 0.5
-  yOffset: 0.1
+  XZOffset: 0.5
+  YOffset: 0.1
   DebugData: 1
   DebugLog: 1
   DebugLogPassableNodes: 0
   DebugLogImpassableNodes: 0
+  DebugLogNodeCount: 0
+  DebugLogTerrainGenerationPassableCount: 0
+  DebugLogTerrainGenerationImpassableCount: 0
   DebugGizmos: 1
-  DebugPassableGizmos: 1
+  DebugPassableGizmos: 0
   DebugImpassableGizmos: 1
+  TimeBetweenChecks: 100
+  PerformRescans: 1
 --- !u!154 &66290509
 TerrainCollider:
   m_ObjectHideFlags: 0
@@ -2409,6 +2414,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Auriphon
       objectReference: {fileID: 0}
+    - target: {fileID: 3228870969923670771, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4480926770286931898, guid: 9e6c1a2deb6f6b34f8051a03e80df1f1, type: 3}
       propertyPath: m_Height
       value: 5.556237
@@ -2486,7 +2495,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!96 &1484028136
 TrailRenderer:
   serializedVersion: 3
@@ -2787,7 +2796,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4164371554036673866, guid: 495481b66999384429c51e3e192ea2f2, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4164371554036673866, guid: 495481b66999384429c51e3e192ea2f2, type: 3}
       propertyPath: m_TagString
@@ -7844,7 +7853,7 @@ Transform:
   m_GameObject: {fileID: 1966586349}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 64.8, y: 0, z: 51.6}
+  m_LocalPosition: {x: 63.9, y: 0, z: 62.88}
   m_LocalScale: {x: 50, y: 10, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []

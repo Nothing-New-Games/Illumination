@@ -1,9 +1,9 @@
 ﻿// Material/Shader Inspector for Unity 2017/2018
 // Copyright (C) 2019 Thryrallo
 
+#pragma warning disable CS0114
+
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEditor;
