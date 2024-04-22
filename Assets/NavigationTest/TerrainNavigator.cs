@@ -2,6 +2,8 @@ using Assets.Entities;
 using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -38,26 +40,28 @@ public class TerrainNavigator : MonoBehaviour
 
 
     #region Debug Toggles
-    [FoldoutGroup("Gizmos Toggles")]
+    [FoldoutGroup("Debug")]
     public bool DebugData = false;
 
-    [FoldoutGroup("Gizmos Toggles"), ShowIf("@DebugData")]
+    [FoldoutGroup("Debug/Gizmos Toggles"), ShowIf("@DebugData"), Indent]
     public bool DrawGizmos = false;
-    [FoldoutGroup("Gizmos Toggles"), ShowIf("@DebugData && DrawGizmos")]
+    [FoldoutGroup("Debug/Gizmos Toggles"), ShowIf("@DebugData && DrawGizmos"), Indent(2)]
     public bool DrawShortestPath = true;
-    [FoldoutGroup("Gizmos Toggles"), ShowIf("@DebugData && DrawGizmos")]
+    [FoldoutGroup("Debug/Gizmos Toggles"), ShowIf("@DebugData && DrawGizmos"), Indent(2)]
     public bool DrawNeighbors = true;
-    [FoldoutGroup("Gizmos Toggles"), ShowIf("@DebugData && DrawGizmos")]
+    [FoldoutGroup("Debug/Gizmos Toggles"), ShowIf("@DebugData && DrawGizmos"), Indent(2)]
     public bool DrawDestinationTile = true;
-    [FoldoutGroup("Gizmos Toggles"), ShowIf("@DebugData && DrawGizmos")]
+    [FoldoutGroup("Debug/Gizmos Toggles"), ShowIf("@DebugData && DrawGizmos"), Indent(2)]
     public bool DrawTrueTile = true;
+    [FoldoutGroup("Debug/Gizmos Toggles"), ShowIf("@DebugData && DrawGizmos"), Indent(2)]
+    public bool DrawClusterTiles = true;
 
-    [FoldoutGroup("Printing"), ShowIf("@DebugData")]
-    public bool PrintErrors = true;
-    [FoldoutGroup("Printing"), ShowIf("@DebugData")]
-    public bool PrintWarnings = true;
-    [FoldoutGroup("Printing"), ShowIf("@DebugData")]
+    [FoldoutGroup("Debug/Printing"), ShowIf("@DebugData"), Indent]
     public bool PrintMessages = true;
+    [FoldoutGroup("Debug/Printing"), ShowIf("@DebugData"), Indent]
+    public bool PrintErrors = true;
+    [FoldoutGroup("Debug/Printing"), ShowIf("@DebugData"), Indent]
+    public bool PrintWarnings = true;
     #endregion
 
     #region Gizmo Colors
@@ -70,6 +74,8 @@ public class TerrainNavigator : MonoBehaviour
     public Color TrueTileGizmoColor = Color.cyan;
     [ShowIf("@DrawGizmos && DrawDestinationTile"), FoldoutGroup("Gizmo Colors")]
     public Color DestinationTileGizmoColor = Color.blue;
+    [ShowIf("@DrawGizmos && DrawTrueTile"), FoldoutGroup("Gizmo Colors")]
+    public Color ClusterNodeGizmoColor = Color.cyan;
 
     #endregion
 
@@ -101,9 +107,25 @@ public class TerrainNavigator : MonoBehaviour
             if (DebugData && PrintMessages)
                 Debug.Log($"Terrain pulled: {terrainHandler}");
 
+            //if (cluster != null && (cluster.GetAllNodes == null || cluster.GetAllNodes.Count == 0 || cluster.GetAllNodes.Any(node => node.IsDestroyed())))
+            //{
+            //    cluster = null;
+            //}
+
+            //if (neighbors.Count == 0 || neighbors.Any(node => node.IsDestroyed()))
+            //{
+            //    neighbors = new();
+            //}
+
+            //if (TrueTile != null && TrueTile.IsDestroyed())
+            //{
+            //    TrueTile = null;
+            //}
+
             TrueTile = terrainHandler.GetCurrentNode(transform.position);
             neighbors = terrainHandler.GetNeighbors(TrueTile);
             cluster = terrainHandler.CreateNodeClusterFromAgent(this);
+
 
             Vector3 targetPosition = _AliveComponent.CurrentLivingTarget?.transform.position ?? _AliveComponent.CurrentInteractTarget?.GetComponent<Transform>().position ?? _AliveComponent._DebugCurrentDestination;
             if (targetPosition != Vector3.zero)
@@ -203,6 +225,12 @@ public class TerrainNavigator : MonoBehaviour
                     Gizmos.DrawCube(TrueTile.transform.position, TrueTile.transform.localScale);
                 }
                 //Draw cluster tiles
+                if (DrawClusterTiles && cluster != null)
+                {
+                    Gizmos.color = ClusterNodeGizmoColor;
+                    foreach (Node tile in cluster.GetAllNodes)
+                        Gizmos.DrawCube(tile.transform.position, tile.transform.localScale);
+                }
             }
         }
     }

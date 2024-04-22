@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine.UIElements;
+using Unity.VisualScripting;
 
 public class TerrainTiling : MonoBehaviour
 {
@@ -214,6 +215,12 @@ public class TerrainTiling : MonoBehaviour
         return false;
     }
 
+    private void FullTileRefresh()
+    {
+        ClearData();
+        GenerateTerrainNodes();
+    }
+
     private void AddNewNode(float key, Node newNode, ref Dictionary<float, List<Node>> dictionary)
     {
         if (newNode == null)
@@ -265,6 +272,9 @@ public class TerrainTiling : MonoBehaviour
 
     internal protected List<Node> FindShortestPathDijkstra(Node startingNode, Node targetNode)
     {
+        if (Nodes.Any(ZNodes => ZNodes.Value.Any(node => node.IsDestroyed())))
+            FullTileRefresh();
+
         List<Node> shortestPathCollection = new List<Node>();
 
         // Initialize a dictionary to store the distance from the start node to each node
@@ -339,6 +349,9 @@ public class TerrainTiling : MonoBehaviour
 
     internal protected List<Node> FindShortestPathAStar(Node startingNode, Node targetNode)
     {
+        if (Nodes.Any(ZNodes => ZNodes.Value.Any(node => node.IsDestroyed())))
+            FullTileRefresh();
+
         List<Node> shortestPathCollection = new List<Node>();
 
         // Initialize a dictionary to store the total estimated cost from the start node to each node
@@ -433,7 +446,7 @@ public class TerrainTiling : MonoBehaviour
 
     public List<Node> GetNodeList(float Key)
     {
-        if (Nodes.Count == 0) UpdateNodesFromChildren();
+        if (Nodes.Count == 0) FullTileRefresh();
 
 
         if (Nodes.ContainsKey(Key))
@@ -442,7 +455,7 @@ public class TerrainTiling : MonoBehaviour
     }
     public bool GetNodeList(float Key, out List<Node> ZNodes)
     {
-        if (Nodes.Count == 0) UpdateNodesFromChildren();
+        if (Nodes.Count == 0 || Nodes.Any(ZNodes => ZNodes.Value.Any(node => node.IsDestroyed()))) FullTileRefresh();
 
 
         ZNodes = GetNodeList(Key);
@@ -453,6 +466,9 @@ public class TerrainTiling : MonoBehaviour
     //[Button("Test for getting neighbors")]
     public List<Node> GetNeighbors(Node node)
     {
+        if (Nodes.Any(ZNodes => ZNodes.Value.Any(node => node.IsDestroyed())))
+            FullTileRefresh();
+
         List<Node> neighborNodes = new List<Node>();
         
         if (node == null) return neighborNodes;
@@ -485,6 +501,9 @@ public class TerrainTiling : MonoBehaviour
     //[Button("Test for getting neighbors")]
     public List<NodeCluster> GetNodeClusterNeighbores(NodeCluster cluster = null, TerrainNavigator navigator = null)
     {
+        if (Nodes.Any(ZNodes => ZNodes.Value.Any(node => node.IsDestroyed())))
+            FullTileRefresh();
+
         List<NodeCluster> neighboringClusters = new List<NodeCluster>();
 
         // Extracting necessary information from the original cluster
@@ -565,6 +584,9 @@ public class TerrainTiling : MonoBehaviour
     }
     public NodeCluster GetClusterFromPositions(Node trueTile, Vector3[] nodePositions)
     {
+        if (Nodes.Any(ZNodes => ZNodes.Value.Any(node => node.IsDestroyed())))
+            FullTileRefresh();
+
         NodeCluster newCluster = new(trueTile);
 
         Node currentNode;
@@ -581,6 +603,9 @@ public class TerrainTiling : MonoBehaviour
 
     public List<Node> GetNodesByContestor(GameObject contestor, Node trueTile)
     {
+        if (Nodes.Any(ZNodes => ZNodes.Value.Any(node => node.IsDestroyed())))
+            FullTileRefresh();
+
         Collider collider = contestor.GetComponent<Collider>();
         Vector3 trueTilePos = trueTile.transform.position;
 
@@ -599,10 +624,12 @@ public class TerrainTiling : MonoBehaviour
                 nodeToExamine = currentZNodes.First(node => node.X == xPos);
                 nodeToExamine.CheckForColliders();
 
-                if (nodeToExamine.ContestedBy == contestor)
-                {
-                    ownedByContestor.Add(nodeToExamine);
-                }
+                ownedByContestor.Add(nodeToExamine);
+
+                //if (nodeToExamine.ContestedBy == contestor)
+                //{
+                //    ownedByContestor.Add(nodeToExamine);
+                //}
             }
         }
 
@@ -610,6 +637,9 @@ public class TerrainTiling : MonoBehaviour
     }
     public NodeCluster CreateNodeClusterFromAgent(TerrainNavigator agent)
     {
+        if (Nodes.Any(ZNodes => ZNodes.Value.Any(node => node.IsDestroyed())))
+            FullTileRefresh();
+
         if (agent.GetTrueTile == null) return null;
 
         // Create a new node cluster with the true tile and its contested neighbors
