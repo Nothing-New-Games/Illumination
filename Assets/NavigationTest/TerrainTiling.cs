@@ -200,7 +200,7 @@ public class TerrainTiling : MonoBehaviour
     [Button("Get Children Nodes")]
     private bool UpdateNodesFromChildren()
     {
-        var children = GetComponentsInChildren<Node>();
+        var children = GetComponentsInChildren<Node>(true);
         if (children.Length > 0)
         {
             foreach (var child in children)
@@ -450,7 +450,7 @@ public class TerrainTiling : MonoBehaviour
         return ZNodes != null;
     }
 
-    [Button("Test for getting neighbors")]
+    //[Button("Test for getting neighbors")]
     public List<Node> GetNeighbors(Node node)
     {
         List<Node> neighborNodes = new List<Node>();
@@ -480,31 +480,142 @@ public class TerrainTiling : MonoBehaviour
 
         return neighborNodes;
     }
-
-    public NodeCluster CreateNodeCluster(Node trueTile)
+    
+    
+    //[Button("Test for getting neighbors")]
+    public List<NodeCluster> GetNodeClusterNeighbores(NodeCluster cluster = null, TerrainNavigator navigator = null)
     {
-        List<Node> clusterNodes = new List<Node>();
+        List<NodeCluster> neighboringClusters = new List<NodeCluster>();
 
-        // Add the true tile to the cluster nodes list
-        clusterNodes.Add(trueTile);
+        // Extracting necessary information from the original cluster
+        Node trueTile;
 
-        // Get the neighbors of the true tile
-        List<Node> trueTileNeighbors = GetNeighbors(trueTile);
+        if (navigator != null)
+            cluster = navigator.cluster;
 
-        // Loop through the true tile neighbors
-        foreach (Node neighbor in trueTileNeighbors)
+        if (cluster == null)
         {
-            // Check if the neighbor is contested by the same entity as the true tile
-            if (neighbor.ContestedBy == trueTile.ContestedBy)
+            Debug.LogError("No cluster provided!");
+            return neighboringClusters;
+        }
+
+        trueTile = cluster.GetTrueTile;
+
+        // Iterating through neighboring positions to find clusters
+        for (int xOffset = -1; xOffset <= 1; xOffset++)
+        {
+            for (int zOffset = -1; zOffset <= 1; zOffset++)
             {
-                // Add the neighbor to the cluster nodes list
-                clusterNodes.Add(neighbor);
+                // Skip the central position
+                if (xOffset == 0 && zOffset == 0)
+                    continue;
+
+                // Construct the true tile for the neighboring cluster
+                Node neighborTrueTile = GetCurrentNode(new Vector3
+                    (
+                        trueTile.X + xOffset * cluster.Area,
+                        0,
+                        trueTile.Z + zOffset * cluster.Area
+                    ));
+
+                if (neighborTrueTile == null)
+                    continue;
+
+                // Create a new node cluster for the neighboring cluster
+                NodeCluster neighboringCluster = new NodeCluster(neighborTrueTile);
+
+                // Populate the neighboring cluster with nodes
+                for (float z = neighborTrueTile.Z - cluster.Area / 2; z <= neighborTrueTile.Z + cluster.Area / 2; z++)
+                {
+                    for (float x = neighborTrueTile.X - cluster.Area / 2; x <= neighborTrueTile.X + cluster.Area / 2; x++)
+                    {
+                        neighboringCluster.AddNode(GetCurrentNode(new Vector3(x, 0, z)));
+                    }
+                }
+
+                // Add the neighboring cluster to the list if it's valid
+                if (neighboringCluster.Area == cluster.Area)
+                    neighboringClusters.Add(neighboringCluster);
             }
         }
 
-        // Create a new node cluster with the true tile and its contested neighbors
-        NodeCluster cluster = new NodeCluster(trueTile, clusterNodes);
 
-        return cluster;
+
+
+
+
+
+
+
+
+        //NodeCluster possibleCluster;
+        //Node clusterTrueTile;
+
+        //foreach (Node node in cluster.GetAllNodes)
+        //{
+
+
+        //    possibleCluster = new(GetCurrentNode(/*Need to use cluster.GetTrueTile and calculate where the true tile would be for this new cluster.*/));
+        //    if (possibleCluster != null)
+        //        ClusterNeighbores.Add(possibleCluster);
+        //    else Debug.LogError($"Failed to find one of the clusters for {cluster}!");
+        //}
+
+        return neighboringClusters;
+    }
+    public NodeCluster GetClusterFromPositions(Node trueTile, Vector3[] nodePositions)
+    {
+        NodeCluster newCluster = new(trueTile);
+
+        Node currentNode;
+        foreach (var nodePos in nodePositions)
+        {
+            currentNode = GetCurrentNode(nodePos);
+            if (currentNode != null)
+                newCluster.AddNode(currentNode);
+            else Debug.LogError($"Unable to find node at {nodePos}!");
+        }
+
+        return newCluster;
+    }
+
+    public List<Node> GetNodesByContestor(GameObject contestor, Node trueTile)
+    {
+        Collider collider = contestor.GetComponent<Collider>();
+        Vector3 trueTilePos = trueTile.transform.position;
+
+        List<Node> currentZNodes;
+        List<Node> ownedByContestor = new List<Node>();
+        int contestorBoundsX = Mathf.RoundToInt(collider.bounds.extents.x);
+        int contestorBoundsZ = Mathf.RoundToInt(collider.bounds.extents.z);
+
+        Node nodeToExamine;
+
+        for (float zPos = trueTilePos.z - contestorBoundsZ; zPos < trueTilePos.z + contestorBoundsZ; zPos++)
+        {
+            currentZNodes = Nodes[zPos];
+            for (float xPos = trueTilePos.x - contestorBoundsX; xPos < trueTilePos.x + contestorBoundsX; xPos++)
+            {
+                nodeToExamine = currentZNodes.First(node => node.X == xPos);
+                nodeToExamine.CheckForColliders();
+
+                if (nodeToExamine.ContestedBy == contestor)
+                {
+                    ownedByContestor.Add(nodeToExamine);
+                }
+            }
+        }
+
+        return ownedByContestor;
+    }
+    public NodeCluster CreateNodeClusterFromAgent(TerrainNavigator agent)
+    {
+        if (agent.GetTrueTile == null) return null;
+
+        // Create a new node cluster with the true tile and its contested neighbors
+        NodeCluster cluster = new NodeCluster(agent.GetTrueTile, GetNodesByContestor(agent.gameObject, agent.GetTrueTile));
+        if (cluster.GetAllNodes.Count > 0)
+            return cluster;
+        else return null;
     }
 }

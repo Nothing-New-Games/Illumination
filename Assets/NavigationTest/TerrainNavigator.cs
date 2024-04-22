@@ -3,6 +3,7 @@ using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 [RequireComponent(typeof(Alive))]
 public class TerrainNavigator : MonoBehaviour
@@ -19,8 +20,15 @@ public class TerrainNavigator : MonoBehaviour
     [ShowInInspector, ReadOnly, FoldoutGroup("ReadOnly")]
     private List<Node> neighbors = new();
 
-    [ShowInInspector, ReadOnly, FoldoutGroup("ReadOnly")]
+
+
+    //[FoldoutGroup("ReadOnly"), LabelText("True Tile:"), ShowInInspector]
     private Node TrueTile;
+    public Node GetTrueTile => TrueTile;
+    [FoldoutGroup("ReadOnly"), ShowInInspector, PropertySpaceAttribute(0, 20)]
+    public NodeCluster cluster;
+
+
     [ShowInInspector, ReadOnly, FoldoutGroup("ReadOnly")]
     private Node DestinationTile;
 
@@ -67,33 +75,38 @@ public class TerrainNavigator : MonoBehaviour
 
     private void Awake()
     {
-        if (_AliveComponent == null) _AliveComponent = GetComponentInChildren<Alive>() ?? GetComponent<Alive>() ?? GetComponentInParent<Alive>();
-
-        if (_AliveComponent == null)
-        {
-
-            if (PrintErrors && DebugData)
-                Debug.LogError($"No component of type Alive found on {name}!");
-            else Debug.LogWarning($"Critical error message hidden due to current toggles for {name}");
-            gameObject.SetActive(false);
-        }
+        UpdateAliveComponentRef();
     }
 
     private void FixedUpdate()
     {
         if (timeElapsed >= TimerDuration)
         {
-            if (terrainHandler == null)
-            {
-                GetCurrentTerrainHandler();
-            }
-
             timeElapsed = 0;
+            UpdateTileData();
+        }
+
+        timeElapsed += Time.deltaTime;
+        
+    }
+
+    [Button]
+    private void UpdateTileData()
+    {
+        if (terrainHandler != null || GetCurrentTerrainHandler())
+        {
+            if (_AliveComponent == null)
+                UpdateAliveComponentRef();
+
+            if (DebugData && PrintMessages)
+                Debug.Log($"Terrain pulled: {terrainHandler}");
+
             TrueTile = terrainHandler.GetCurrentNode(transform.position);
             neighbors = terrainHandler.GetNeighbors(TrueTile);
+            cluster = terrainHandler.CreateNodeClusterFromAgent(this);
 
             Vector3 targetPosition = _AliveComponent.CurrentLivingTarget?.transform.position ?? _AliveComponent.CurrentInteractTarget?.GetComponent<Transform>().position ?? _AliveComponent._DebugCurrentDestination;
-            if (targetPosition !=  Vector3.zero)
+            if (targetPosition != Vector3.zero)
                 DestinationTile = terrainHandler.GetCurrentNode(targetPosition);
             else
             {
@@ -102,7 +115,7 @@ public class TerrainNavigator : MonoBehaviour
                 return;
             }
 
-            if (TrueTile == null)
+            if (TrueTile == null && DestinationTile != null)
             {
                 if (PrintWarnings && DebugData)
                     Debug.LogWarning("No current node found!");
@@ -110,23 +123,51 @@ public class TerrainNavigator : MonoBehaviour
             }
             shortestPath = terrainHandler.FindShortestPathAStar(TrueTile, DestinationTile);
         }
-
-        timeElapsed += Time.deltaTime;
-        
+        else if (PrintErrors && DebugData) Debug.LogError("Unable to update tiles, Terrain not found!");
+        else Debug.LogWarning("Error message suppressed!");
     }
 
-    private void GetCurrentTerrainHandler()
+    private void UpdateAliveComponentRef()
+    {
+        if (_AliveComponent == null) _AliveComponent = GetComponentInChildren<Alive>() ?? GetComponent<Alive>() ?? GetComponentInParent<Alive>();
+
+        if (_AliveComponent == null)
+        {
+            if (PrintErrors && DebugData)
+                Debug.LogError($"No component of type Alive found on {name}!");
+            else Debug.LogWarning($"Critical error message hidden due to current toggles for {name}");
+            gameObject.SetActive(false);
+        }
+
+        else if (PrintMessages && DebugData)
+            Debug.Log("Alive component successfully found.");
+    }
+
+    private bool GetCurrentTerrainHandler()
     {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit))
+        // Exclude the layer of the object this script is attached to
+        int layerMask = ~(1 << gameObject.layer | 1 << LayerMask.NameToLayer("Ignore Raycast"));
+
+        if (Physics.Raycast(transform.position + Vector3.up * 10, Vector3.down, out hit, Mathf.Infinity, layerMask))
         {
+            if (PrintMessages && DebugData)
+                Debug.Log($"Hit: {hit.collider.name}");
+
             terrainHandler = hit.collider.gameObject.GetComponent<TerrainTiling>();
         }
+        else if (PrintWarnings && DebugData) Debug.LogWarning($"Attempted to find terrain, but hit {hit.collider.name}!");
+
+        return terrainHandler != null;
     }
 
 
     private void OnDrawGizmos()
     {
+        //Visual test for raycast to find terrain
+        //Gizmos.color = Color.green;
+        //Gizmos.DrawLine(transform.position + Vector3.up * 10, new Vector3(transform.position.x, transform.position.y - 1000, transform.position.z));
+
         if (DebugData)
         {
             if (DrawGizmos)
@@ -147,19 +188,21 @@ public class TerrainNavigator : MonoBehaviour
                     Gizmos.color = NeighborsGizmoColor;
                     foreach (var neighbor in neighbors)
                     {
-                        Gizmos.DrawWireCube(neighbor.transform.position + new Vector3(0, terrainHandler.YOffset, 0), new Vector3(1, 0.1f, 1));
+                        if (neighbor != null)
+                            Gizmos.DrawCube(neighbor.transform.position + new Vector3(0, terrainHandler.YOffset, 0), new Vector3(1, 0.1f, 1));
                     }
                 }
                 if (DrawDestinationTile && DestinationTile)
                 {
                     Gizmos.color = DestinationTileGizmoColor;
-                    Gizmos.DrawWireCube(DestinationTile.transform.position, DestinationTile.transform.localScale);
+                    Gizmos.DrawCube(DestinationTile.transform.position, DestinationTile.transform.localScale);
                 }
                 if (DrawTrueTile && TrueTile)
                 {
                     Gizmos.color = TrueTileGizmoColor;
-                    Gizmos.DrawWireCube(TrueTile.transform.position, TrueTile.transform.localScale);
+                    Gizmos.DrawCube(TrueTile.transform.position, TrueTile.transform.localScale);
                 }
+                //Draw cluster tiles
             }
         }
     }
