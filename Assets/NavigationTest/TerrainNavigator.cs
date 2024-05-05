@@ -27,7 +27,7 @@ public class TerrainNavigator : MonoBehaviour
     //[FoldoutGroup("ReadOnly"), LabelText("True Tile:"), ShowInInspector]
     private Node TrueTile;
     public Node GetTrueTile => TrueTile;
-    [FoldoutGroup("ReadOnly"), ShowInInspector, PropertySpaceAttribute(0, 20)]
+    [FoldoutGroup("ReadOnly"), ShowInInspector, ReadOnly, PropertySpaceAttribute(0, 20)]
     public NodeCluster cluster;
 
 
@@ -65,16 +65,16 @@ public class TerrainNavigator : MonoBehaviour
     #endregion
 
     #region Gizmo Colors
-    [ShowIf("@DrawGizmos && DrawShortestPath"), FoldoutGroup("Gizmo Colors")]
+    [ShowIf("@DrawGizmos && DrawShortestPath"), FoldoutGroup("Debug/Gizmo Colors"), Indent]
     public Color PathGizmoColor = Color.cyan;
-    [ShowIf("@DrawGizmos && DrawNeighbors"), FoldoutGroup("Gizmo Colors")]
+    [ShowIf("@DrawGizmos && DrawNeighbors"), FoldoutGroup("Debug/Gizmo Colors"), Indent]
     public Color NeighborsGizmoColor = Color.blue;
 
-    [ShowIf("@DrawGizmos && DrawTrueTile"), FoldoutGroup("Gizmo Colors")]
+    [ShowIf("@DrawGizmos && DrawTrueTile"), FoldoutGroup("Debug/Gizmo Colors"), Indent]
     public Color TrueTileGizmoColor = Color.cyan;
-    [ShowIf("@DrawGizmos && DrawDestinationTile"), FoldoutGroup("Gizmo Colors")]
+    [ShowIf("@DrawGizmos && DrawDestinationTile"), FoldoutGroup("Debug/Gizmo Colors"), Indent]
     public Color DestinationTileGizmoColor = Color.blue;
-    [ShowIf("@DrawGizmos && DrawTrueTile"), FoldoutGroup("Gizmo Colors")]
+    [ShowIf("@DrawGizmos && DrawTrueTile"), FoldoutGroup("Debug/Gizmo Colors"), Indent]
     public Color ClusterNodeGizmoColor = Color.cyan;
 
     #endregion
@@ -229,7 +229,10 @@ public class TerrainNavigator : MonoBehaviour
                 {
                     Gizmos.color = ClusterNodeGizmoColor;
                     foreach (Node tile in cluster.GetAllNodes)
+                    {
+                        if (tile == cluster.GetTrueTile && DrawTrueTile) continue;
                         Gizmos.DrawCube(tile.transform.position, tile.transform.localScale);
+                    }
                 }
             }
         }
